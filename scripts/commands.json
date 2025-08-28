@@ -1,0 +1,43 @@
+{
+  "setup": {
+    "description": "Comandos para configurar el proyecto",
+    "commands": [
+      "# 1. Instalar dependencias del backend",
+      "npm install mysql2 jsonwebtoken bcryptjs zod @types/jsonwebtoken @types/bcryptjs",
+      "",
+      "# 2. Configurar base de datos",
+      "node scripts/init-database.js",
+      "",
+      "# 3. Probar conexión",
+      "node scripts/test-connection.js",
+      "",
+      "# 4. Iniciar servidor de desarrollo",
+      "npm run dev"
+    ]
+  },
+  "database": {
+    "description": "Comandos de base de datos",
+    "commands": [
+      "# Probar conexión",
+      "node scripts/test-connection.js",
+      "",
+      "# Reinicializar base de datos",
+      "node scripts/init-database.js",
+      "",
+      "# Conectar a MySQL desde terminal",
+      "mysql -u root -pPoseidon -h localhost -P 3306",
+      "",
+      "# Usar base de datos",
+      "USE movil_express_db;",
+      "",
+      "# Ver tablas",
+      "SHOW TABLES;",
+      "",
+      "# Ver usuarios",
+      "SELECT * FROM usuarios;",
+      "",
+      "# Ver productos",
+      "SELECT * FROM productos;"
+    ]
+  }
+}
