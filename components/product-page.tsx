@@ -589,12 +589,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
       {/* Floating Cart Button eliminado */}
       
       {/* Urgency Banner animado */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 text-center z-40 animate__animated animate__pulse animate__infinite animate__faster animate-bounce">
+      {/*<div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 text-center z-40 animate__animated animate__pulse animate__infinite animate__faster animate-bounce">
         <p className="font-semibold text-lg animate-pulse animate-infinite animate-duration-1000 animate-delay-200 animate-ease-in-out animate-bounce">
           <span className="inline-block animate-bounce mr-2">⏰</span>
           <span className="animate-pulse">¡Oferta por tiempo limitado! Solo quedan <span className="font-extrabold animate-pulse animate-infinite animate-duration-700 animate-delay-100 animate-ease-in-out animate-bounce">3</span> unidades disponibles</span>
         </p>
       </div>
+      */}
       {/* Animaciones Tailwind y animate.css, si no tienes animate.css puedes instalarla o usar solo animate-bounce y animate-pulse de Tailwind */}
     </div>
   );
