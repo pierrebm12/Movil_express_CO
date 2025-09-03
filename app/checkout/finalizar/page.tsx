@@ -11,8 +11,19 @@ export default function FinalizarCompra() {
 
   useEffect(() => {
     const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
-    const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
-    if (!pedido || !detalles) {
+    // Extraer productos directamente de movil-express-storage
+    let detalles = [];
+    try {
+      const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
+      if (zustandState && Array.isArray(zustandState.state?.carrito)) {
+        detalles = zustandState.state.carrito.map((item) => ({
+          ...item.producto,
+          cantidad: item.cantidad,
+          color: item.color
+        }));
+      }
+    } catch (e) {}
+    if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
       setStatus("error");
       setMsg("No hay datos de la compra.");
       return;
