@@ -32,6 +32,17 @@ export default function CheckoutDatosPage() {
       const pedidoId = localStorage.getItem("ultimo_pedido_id");
       const pedido = JSON.parse(localStorage.getItem("checkout_pedido") || "null");
       const detalles = JSON.parse(localStorage.getItem("checkout_detalles") || "null");
+      console.log({ pedidoId, detalles, ...form });
+      if (!pedidoId || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
+        setError("Faltan datos del pedido o productos. Por favor, vuelve al carrito y repite el proceso.");
+        setEnviando(false);
+        return;
+      }
+      if (!form.nombre || !form.direccion || !form.telefono || !form.email || !form.ciudad) {
+        setError("Completa todos los campos obligatorios del formulario.");
+        setEnviando(false);
+        return;
+      }
       const res = await fetch("/api/ordenes/datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
