@@ -35,7 +35,7 @@ export default function CheckoutDatosPage() {
       const res = await fetch("/api/ordenes/datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, pedidoId }),
+        body: JSON.stringify({ ...form, pedidoId, detalles }),
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error || "Error guardando datos");
