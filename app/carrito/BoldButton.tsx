@@ -15,37 +15,24 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
 
   // Guardar datos de compra en localStorage antes de redirigir a Bold
   const saveOrderData = () => {
-    // Puedes ajustar la estructura según tu flujo
-    const detalles = carrito.map((item) => ({
-      ...item.producto, // Guarda todo el objeto producto
-      cantidad: item.cantidad,
-      color: item.color
-    }));
-    // Copia de seguridad: si por alguna razón detalles está vacío, intenta extraer del storage de zustand
-    if (!detalles.length) {
-      try {
-        const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
-        if (zustandState && Array.isArray(zustandState.state?.carrito)) {
-          const detallesZustand = zustandState.state.carrito.map((item) => ({
-            ...item.producto,
-            cantidad: item.cantidad,
-            color: item.color
-          }));
-          localStorage.setItem("order_purchase_detalles", JSON.stringify(detallesZustand));
-        }
-      } catch (e) {}
-    } else {
-      localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
-    }
-    // Simula datos de envío (ajusta según tu flujo real)
+    // Guardar siempre el pedido y el orderId, aunque orderId sea una cadena vacía (pero solo si ya fue generado)
     const pedido = JSON.parse(localStorage.getItem("checkout_formData") || "null") || {};
     pedido.total = total;
     localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
-    // Guardar el orderId para el formulario de datos de envío
-    if (orderId) {
+    if (orderId !== undefined) {
       localStorage.setItem("ultimo_pedido_id", orderId);
     }
+    // Logs para depuración
+    console.log("[BoldButton] Guardado en localStorage:", {
+      order_purchase_pedido: pedido,
+      ultimo_pedido_id: orderId
+    });
   };
+
+  // Forzar el guardado de orderId y detalles en localStorage cada vez que cambien
+  useEffect(() => {
+    saveOrderData();
+  }, [orderId, carrito, total]);
 
   useEffect(() => {
     const newOrderId = `ORD-${Date.now()}`;
