@@ -17,10 +17,9 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
   const saveOrderData = () => {
     // Puedes ajustar la estructura según tu flujo
     const detalles = carrito.map((item) => ({
-      nombre: item.producto.nombre,
+      ...item.producto, // Guarda todo el objeto producto
       cantidad: item.cantidad,
-      color: item.color,
-      precio_actual: item.producto.precio_actual
+      color: item.color
     }));
     // Simula datos de envío (ajusta según tu flujo real)
     const pedido = JSON.parse(localStorage.getItem("checkout_formData") || "null") || {};
