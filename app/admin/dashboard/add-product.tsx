@@ -1,5 +1,9 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState } from "react";
+
+
+import { useEffect } from "react";
 
 export default function AddProductForm() {
   const [form, setForm] = useState({
@@ -13,6 +17,11 @@ export default function AddProductForm() {
   const [message, setMessage] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,6 +39,7 @@ export default function AddProductForm() {
     setMessage("");
     setHasSubmitted(true);
     try {
+      if (typeof window === "undefined") throw new Error("Solo disponible en cliente");
       const token = localStorage.getItem("admin_token");
       if (!token) throw new Error("No autorizado");
       // Usar FormData para enviar imágenes y campos
@@ -60,6 +70,8 @@ export default function AddProductForm() {
       setLoading(false);
     }
   };
+
+  if (!isClient) return null;
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 rounded shadow">

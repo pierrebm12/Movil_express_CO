@@ -19,6 +19,7 @@ const CategoriasTable = forwardRef(function CategoriasTable(props: { refreshKey?
     setLoading(true);
     setError("");
     try {
+      if (typeof window === "undefined") return;
       const token = localStorage.getItem("admin_token");
       if (!token) throw new Error("No autorizado");
       const res = await fetch("/api/admin/categorias", {
@@ -26,6 +27,7 @@ const CategoriasTable = forwardRef(function CategoriasTable(props: { refreshKey?
           "Authorization": `Bearer ${token}`,
         },
       });
+      if (!res.ok) throw new Error("Error al obtener categorías");
       const data = await res.json();
       setCategorias(data.data || []);
     } catch (err: any) {

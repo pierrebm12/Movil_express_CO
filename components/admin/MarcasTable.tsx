@@ -10,14 +10,18 @@ export default function MarcasTable() {
   const fetchMarcas = async () => {
     setLoading(true);
     try {
+      if (typeof window === "undefined") return;
       const token = localStorage.getItem("admin_token");
+      if (!token) throw new Error("No autorizado");
       const res = await fetch("/api/admin/marcas", {
         headers: { "Authorization": `Bearer ${token}` },
       });
+      if (!res.ok) throw new Error("Error al obtener marcas");
       const data = await res.json();
       setMarcas(data.data || []);
-    } catch {
+    } catch (err) {
       setMarcas([]);
+      // Opcional: mostrar error en UI
     }
     setLoading(false);
   };

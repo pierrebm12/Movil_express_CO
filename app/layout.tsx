@@ -52,9 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <script src="https://checkout.bold.co/library/boldPaymentButton.js"></script>
-      </head>
+  <head></head>
       <body className={inter.className}>{children}</body>
     </html>
   )

@@ -115,7 +115,7 @@ export interface ProductoCompleto extends Producto {
   categorias: Categoria[]
   image?: string // Para compatibilidad con componentes que usan 'image'
   name?: string // Para compatibilidad con componentes que usan 'name'
-  rating?: number // Para compatibilidad con Producto de store.ts
+  rating: number // Para compatibilidad con Producto de store.ts
   eco?: boolean // Indica si el producto es eco
 }
 

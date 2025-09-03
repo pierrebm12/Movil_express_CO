@@ -1,4 +1,5 @@
 "use client"
+export const dynamic = "force-dynamic";
 
 import { XCircle, RefreshCw, Home, HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"

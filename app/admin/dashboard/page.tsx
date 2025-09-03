@@ -8,18 +8,23 @@ export default function AdminDashboard() {
   const [admin, setAdmin] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) {
-      router.replace("/admin/login");
-      return;
+    setIsClient(true);
+    // Solo ejecutar en cliente
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_token");
+      if (!token) {
+        router.replace("/admin/login");
+        return;
+      }
+      setAdmin({ nombre: "Administrador" });
+      setLoading(false);
     }
-    setAdmin({ nombre: "Administrador" });
-    setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="p-8">Cargando...</div>;
+  if (!isClient || loading) return <div className="p-8">Cargando...</div>;
 
   return (
     <div className="p-8">

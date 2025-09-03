@@ -26,7 +26,7 @@ const ShareButtonModal: React.FC<ShareButtonModalProps> = ({ product }) => {
   return (
     <>
       <button
-        className="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 shadow-md"
+        className="flex-1 bg-black hover:bg-primary-600 text-primary-600 hover:text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 shadow-md"
         onClick={() => setOpen(true)}
       >
         <Share2 className="w-5 h-5" />
@@ -38,7 +38,7 @@ const ShareButtonModal: React.FC<ShareButtonModalProps> = ({ product }) => {
             <button className="absolute top-2 right-2 text-primary-500 hover:text-black" onClick={() => setOpen(false)}>
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary-700"><Share2 className="w-5 h-5" /> Compartir producto</h2>
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-black hover:text-primary-700"><Share2 className="w-5 h-5" /> Compartir producto</h2>
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleCopy}
@@ -49,7 +49,7 @@ const ShareButtonModal: React.FC<ShareButtonModalProps> = ({ product }) => {
               </button>
               <button
                 onClick={handleWhatsapp}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black hover:bg-primary-700 text-white font-semibold justify-center border border-black"
+                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-black text-primary-600 hover:bg-primary-700 hover:text-white font-semibold justify-center border border-black"
               >
                 <MessageCircle className="w-5 h-5" />
                 WhatsApp
@@ -556,9 +556,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
             <div className="space-y-4">
             <button
               onClick={handleComprarAhora}
-              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary -700 text-white font-bold py-4 px-8 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+              className="w-full bg-gradient-to-r from-black to-black text-primary hover:from-primary-600 hover:to-primary-700 hover:text-white font-bold py-4 px-8 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
             >
-              🛒 Comprar Ahora - {product.precio_actual ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(product.precio_actual) : ''}
+              🛒 Comprar Ahora {product.precio_actual ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(product.precio_actual) : ''}
             </button>
               
               <div className="flex space-x-4">

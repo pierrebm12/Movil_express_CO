@@ -1,5 +1,6 @@
 
 "use client"
+export const dynamic = "force-dynamic";
 // Utilidad para formatear precios en COP
 function formatearPrecio(valor: number) {
   return valor.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 });

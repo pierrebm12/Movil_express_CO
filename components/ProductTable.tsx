@@ -14,6 +14,7 @@ const ProductTable = forwardRef(function ProductTable(props: { refreshKey?: numb
   const fetchProductos = async () => {
     setLoading(true);
     try {
+      if (typeof window === "undefined") return;
       const token = localStorage.getItem("admin_token");
       if (!token) throw new Error("No autorizado");
       const res = await fetch("/api/admin/productos", {
@@ -21,10 +22,12 @@ const ProductTable = forwardRef(function ProductTable(props: { refreshKey?: numb
           "Authorization": `Bearer ${token}`,
         },
       });
+      if (!res.ok) throw new Error("Error al obtener productos");
       const data = await res.json();
       setProductos(data.productos || []);
-    } catch {
+    } catch (err) {
       setProductos([]);
+      // Opcional: mostrar error en UI
     }
     setLoading(false);
   };
