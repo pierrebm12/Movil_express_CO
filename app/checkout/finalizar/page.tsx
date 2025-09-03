@@ -34,8 +34,21 @@ export default function FinalizarCompra() {
       body: JSON.stringify({ pedido, detalles })
     })
       .then(res => res.json())
-      .then(data => {
+      .then(async data => {
         if (data.success) {
+          // Notificar por WhatsApp/SMS a Movil Express
+          try {
+            // Intentar extraer datos de envío si existen
+            let datosEnvio = null;
+            try {
+              datosEnvio = JSON.parse(localStorage.getItem("checkout_datos_envio") || "null");
+            } catch (e) {}
+            await fetch("/api/ordenes/whatsapp", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ pedido, detalles, datosEnvio })
+            });
+          } catch (e) {}
           setStatus("ok");
           localStorage.removeItem("order_purchase_pedido");
           localStorage.removeItem("order_purchase_detalles");
