@@ -27,6 +27,10 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
     pedido.total = total;
     localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
     localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
+    // Guardar el orderId para el formulario de datos de envío
+    if (orderId) {
+      localStorage.setItem("ultimo_pedido_id", orderId);
+    }
   };
 
   useEffect(() => {

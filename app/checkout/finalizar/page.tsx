@@ -28,6 +28,10 @@ export default function FinalizarCompra() {
           setStatus("ok");
           localStorage.removeItem("order_purchase_pedido");
           localStorage.removeItem("order_purchase_detalles");
+          // Redirigir automáticamente a la sección de datos de envío
+          setTimeout(() => {
+            window.location.href = "/checkout/datos";
+          }, 1200);
         } else {
           setStatus("error");
           setMsg(data.error || "Error al notificar la compra.");
