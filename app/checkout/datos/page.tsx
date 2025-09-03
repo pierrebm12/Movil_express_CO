@@ -31,7 +31,7 @@ export default function CheckoutDatosPage() {
       // Aquí puedes asociar los datos al último pedido creado (puedes usar localStorage o un ID de orden)
       const pedidoId = localStorage.getItem("ultimo_pedido_id");
       const pedido = JSON.parse(localStorage.getItem("checkout_pedido") || "null");
-      const detalles = JSON.parse(localStorage.getItem("checkout_detalles") || "null");
+  const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
       console.log({ pedidoId, detalles, ...form });
       if (!pedidoId || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
         setError("Faltan datos del pedido o productos. Por favor, vuelve al carrito y repite el proceso.");
