@@ -53,7 +53,7 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
     script.setAttribute("data-currency", "COP");
     script.setAttribute("data-order-id", orderId);
     script.setAttribute("data-description", "Compra en Movil Express");
-    script.setAttribute("data-redirection-url", "https://4cr2vgnr-3000.use2.devtunnels.ms/checkout/finalizar");
+    script.setAttribute("data-redirection-url", "https://movilexpressco.up.railway.app/checkout/finalizar");
     script.setAttribute("data-integrity-signature", integritySignature);
     // Guardar datos antes de redirigir (cuando el usuario hace click en el botón de Bold)
     script.addEventListener("click", saveOrderData);
