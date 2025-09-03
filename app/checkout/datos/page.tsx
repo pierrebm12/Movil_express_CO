@@ -60,8 +60,9 @@ export default function CheckoutDatosPage() {
         });
       }
 
-      setExito(true);
-      setTimeout(() => router.replace("/catalogo"), 3000);
+  setExito(true);
+  alert("¡Formulario enviado correctamente! La compra ha sido finalizada.");
+  setTimeout(() => router.replace("/catalogo"), 300);
     } catch (err: any) {
       setError(err.message || "Error enviando datos");
     } finally {
