@@ -21,11 +21,26 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
       cantidad: item.cantidad,
       color: item.color
     }));
+    // Copia de seguridad: si por alguna razón detalles está vacío, intenta extraer del storage de zustand
+    if (!detalles.length) {
+      try {
+        const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
+        if (zustandState && Array.isArray(zustandState.state?.carrito)) {
+          const detallesZustand = zustandState.state.carrito.map((item) => ({
+            ...item.producto,
+            cantidad: item.cantidad,
+            color: item.color
+          }));
+          localStorage.setItem("order_purchase_detalles", JSON.stringify(detallesZustand));
+        }
+      } catch (e) {}
+    } else {
+      localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
+    }
     // Simula datos de envío (ajusta según tu flujo real)
     const pedido = JSON.parse(localStorage.getItem("checkout_formData") || "null") || {};
     pedido.total = total;
     localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
-    localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
     // Guardar el orderId para el formulario de datos de envío
     if (orderId) {
       localStorage.setItem("ultimo_pedido_id", orderId);
