@@ -10,8 +10,8 @@ export default function FinalizarCompra() {
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
+    // Extraer datos de pedido y de envío
     const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
-    // Extraer productos directamente de movil-express-storage
     let detalles = [];
     try {
       const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
@@ -23,36 +23,29 @@ export default function FinalizarCompra() {
         }));
       }
     } catch (e) {}
+    // Extraer datos de envío si existen
+    let datosEnvio = null;
+    try {
+      datosEnvio = JSON.parse(localStorage.getItem("checkout_datos_envio") || "null");
+    } catch (e) {}
     if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
       setStatus("error");
       setMsg("No hay datos de la compra.");
       return;
     }
+    // Unificar todos los datos en un solo objeto pedidoFinal
+    const pedidoFinal = { ...pedido, ...(datosEnvio || {}) };
     fetch("/api/order_purchase", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pedido, detalles })
+      body: JSON.stringify({ pedido: pedidoFinal, detalles })
     })
       .then(res => res.json())
-      .then(async data => {
+      .then(data => {
         if (data.success) {
-          // Notificar por WhatsApp/SMS a Movil Express
-          try {
-            // Intentar extraer datos de envío si existen
-            let datosEnvio = null;
-            try {
-              datosEnvio = JSON.parse(localStorage.getItem("checkout_datos_envio") || "null");
-            } catch (e) {}
-            await fetch("/api/ordenes/whatsapp", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ pedido, detalles, datosEnvio })
-            });
-          } catch (e) {}
           setStatus("ok");
           localStorage.removeItem("order_purchase_pedido");
           localStorage.removeItem("order_purchase_detalles");
-          // Redirigir automáticamente a la sección de datos de envío
           setTimeout(() => {
             window.location.href = "/checkout/datos";
           }, 1200);
@@ -89,6 +82,13 @@ export default function FinalizarCompra() {
               <p className="text-gray-200 text-center mb-4">Revisa tu correo. Pronto te contactaremos.</p>
               <Link href="/catalogo">
                 <span className="mt-2 bg-[#988443] text-white hover:bg-[#8a7a3e] rounded-xl px-6 py-2 cursor-pointer inline-block">Volver al catálogo</span>
+              </Link>
+              <Link href={status === "ok" ? "/catalogo" : "#"} legacyBehavior>
+                <span
+                  className={`mt-4 bg-[#232526] text-white rounded-xl px-6 py-2 inline-block ${status !== "ok" ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-[#414345] cursor-pointer"}`}
+                >
+                  Seguir comprando
+                </span>
               </Link>
             </>
           )}
