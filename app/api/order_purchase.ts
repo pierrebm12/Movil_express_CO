@@ -7,6 +7,7 @@ function formatEmailHtml(pedido: any, detalles: any[]) {
   const productos = detalles.map((d: any) => `- ${d.nombre || d.producto_nombre} x${d.cantidad}`).join("<br>");
   return `
     <h2>¡Gracias por tu compra!</h2>
+    <h3>en poco nuestros asesores se pondran en contacto contigo para confirmar tu pedido</h3>
     <p>Hola ${pedido.nombre}, hemos recibido tu pedido.</p>
     <p><b>Datos de envío:</b><br>
     Nombre: ${pedido.nombre} ${pedido.apellido || ""}<br>
