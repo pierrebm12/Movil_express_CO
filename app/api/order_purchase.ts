@@ -49,11 +49,11 @@ export async function POST(req: NextRequest) {
       html: formatEmailHtml(pedido, detalles)
     });
 
-    // Enviar WhatsApp a Movil Express
-    await twilioClient.messages.create({
-      body: formatWhatsappMessage(pedido, detalles),
-      from: process.env.TWILIO_WHATSAPP_FROM,
-      to: process.env.TWILIO_WHATSAPP_TO
+    // Enviar correo a Movil Express
+    await sendMail({
+      to: "movilexpressyopal1@gmail.com",
+      subject: "Nueva compra recibida - Movil Express",
+      html: formatEmailHtml(pedido, detalles)
     });
 
     return NextResponse.json({ success: true });
