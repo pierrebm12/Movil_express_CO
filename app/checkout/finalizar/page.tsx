@@ -16,7 +16,7 @@ export default function FinalizarCompra() {
     try {
       const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
       if (zustandState && Array.isArray(zustandState.state?.carrito)) {
-        detalles = zustandState.state.carrito.map((item) => ({
+        detalles = zustandState.state.carrito.map((item: any) => ({
           ...item.producto,
           cantidad: item.cantidad,
           color: item.color

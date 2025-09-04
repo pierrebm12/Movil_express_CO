@@ -143,7 +143,7 @@ export class DashboardService {
 
       // Calcular crecimiento
       const crecimiento =
-        ventasMesAnterior?.total > 0
+        (ventasMesAnterior?.total ?? 0) > 0
           ? (((ventasMes?.total || 0) - (ventasMesAnterior?.total || 0)) / (ventasMesAnterior?.total || 1)) * 100
           : 0
 
