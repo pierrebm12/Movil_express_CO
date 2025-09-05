@@ -36,6 +36,13 @@ export default function FinalizarCompra() {
     // Unificar todos los datos en un solo objeto pedidoFinal
     const pedidoFinal = { ...pedido, ...(datosEnvio || {}) };
     // 1. Guardar en la base de datos
+    // Asegurar que email, ciudad y total estén presentes
+    const email = pedidoFinal.email || pedidoFinal.correo || (datosEnvio && datosEnvio.email) || "";
+    const ciudad = pedidoFinal.ciudad || pedidoFinal.localidad || (datosEnvio && datosEnvio.ciudad) || "";
+    let total = pedidoFinal.total;
+    if (!total && Array.isArray(detalles)) {
+      total = detalles.reduce((acc, item) => acc + ((item.precio_actual || 0) * (item.cantidad || 1)), 0);
+    }
     fetch("/api/ordenes/datos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,10 +51,10 @@ export default function FinalizarCompra() {
         nombre: pedidoFinal.nombre,
         direccion: pedidoFinal.direccion,
         telefono: pedidoFinal.telefono,
-        email: pedidoFinal.email,
-        ciudad: pedidoFinal.ciudad,
+        email,
+        ciudad,
         notas: pedidoFinal.notas,
-        total: pedidoFinal.total,
+        total,
         detalles
       })
     })

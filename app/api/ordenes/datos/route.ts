@@ -6,7 +6,19 @@ import mysql from "mysql2/promise";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { pedidoId, nombre, direccion, telefono, email, ciudad, notas, detalles, total } = body;
+    const {
+      pedidoId,
+      nombre,
+      direccion,
+      telefono,
+      email,
+      ciudad,
+      total,
+      detalles,
+      departamento = null,
+      codigoPostal = null,
+      notas = null
+    } = body;
     if (!pedidoId || !nombre || !direccion || !telefono || !email || !ciudad || total === undefined) {
       return NextResponse.json({ success: false, error: "Faltan datos obligatorios" }, { status: 400 });
     }
@@ -21,17 +33,25 @@ export async function POST(req: NextRequest) {
     });
 
     // Guardar datos del cliente/pedido usando numero_pedido
-    await connection.execute(
-      `INSERT INTO orden_datos (numero_pedido, nombre, direccion, telefono, email, ciudad, notas, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [pedidoId, nombre, direccion, telefono, email, ciudad, notas || null, total]
+    const [result]: any = await connection.execute(
+      `INSERT INTO orden_datos (numero_pedido, nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [pedidoId, nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total]
     );
+    // Obtener el id autoincremental generado
+    const ordenId = result.insertId;
 
     // Guardar productos comprados si existen
     if (Array.isArray(detalles)) {
       for (const item of detalles) {
         await connection.execute(
-          `INSERT INTO orden_detalles (numero_pedido, producto_nombre, cantidad, color, precio_actual) VALUES (?, ?, ?, ?, ?)` ,
-          [pedidoId, item.nombre || item.producto_nombre, item.cantidad, item.color || null, item.precio_actual]
+          `INSERT INTO orden_detalles (orden_id, producto_nombre, cantidad, precio_unitario, numero_pedido) VALUES (?, ?, ?, ?, ?)` ,
+          [
+            ordenId,
+            item.nombre || item.producto_nombre,
+            item.cantidad,
+            item.precio_actual || item.precio_unitario || 0,
+            pedidoId
+          ]
         );
       }
     }
