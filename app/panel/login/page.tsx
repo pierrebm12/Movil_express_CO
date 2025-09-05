@@ -18,9 +18,12 @@ export default function PanelLogin() {
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.rol === "cliente") {
         localStorage.setItem("panel_token", "ok");
+        localStorage.setItem("panel_rol", "cliente");
         router.replace("/panel");
+      } else if (data.success) {
+        setError("Solo los usuarios con rol cliente pueden acceder a esta sección.");
       } else {
         setError(data.error || "Credenciales incorrectas");
       }

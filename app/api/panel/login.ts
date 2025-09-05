@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (!valid) {
       return NextResponse.json({ error: "Contraseña incorrecta" }, { status: 401 });
     }
-    return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, rol: user.rol });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     INDEX idx_rol (rol)
 );
 
--- Tabla de categorías
 CREATE TABLE IF NOT EXISTS categorias (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -45,8 +44,16 @@ CREATE TABLE IF NOT EXISTS marcas (
 CREATE TABLE IF NOT EXISTS productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(200) NOT NULL,
-    descripcion TEXT,
-    precio_anterior DECIMAL(10,2),
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(30) DEFAULT 'pendiente'
+CREATE TABLE productos_preparados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    orden_id INT NOT NULL,
+    producto_nombre VARCHAR(150) NOT NULL,
+    cantidad INT NOT NULL,
+    fecha_preparado DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (orden_id) REFERENCES orden_datos(id) ON DELETE CASCADE
+);
     precio_actual DECIMAL(10,2) NOT NULL,
     categoria_id INT,
     marca_id INT,
