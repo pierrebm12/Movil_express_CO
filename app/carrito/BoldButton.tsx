@@ -14,17 +14,13 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
   const carrito = useStore((state) => state.carrito);
 
   // Guardar datos de compra en localStorage antes de redirigir a Bold
+  // Eliminar guardado de order_purchase_pedido aquí. Solo guardar orderId si es necesario.
   const saveOrderData = () => {
-    // Guardar siempre el pedido y el orderId, aunque orderId sea una cadena vacía (pero solo si ya fue generado)
-    const pedido = JSON.parse(localStorage.getItem("checkout_formData") || "null") || {};
-    pedido.total = total;
-    localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
     if (orderId !== undefined) {
       localStorage.setItem("ultimo_pedido_id", orderId);
     }
     // Logs para depuración
     console.log("[BoldButton] Guardado en localStorage:", {
-      order_purchase_pedido: pedido,
       ultimo_pedido_id: orderId
     });
   };
