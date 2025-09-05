@@ -35,28 +35,58 @@ export default function FinalizarCompra() {
     }
     // Unificar todos los datos en un solo objeto pedidoFinal
     const pedidoFinal = { ...pedido, ...(datosEnvio || {}) };
-    fetch("/api/order_purchase", {
+    // 1. Guardar en la base de datos
+    fetch("/api/ordenes/datos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pedido: pedidoFinal, detalles })
+      body: JSON.stringify({
+        pedidoId: pedidoFinal.pedidoId || pedidoFinal.id || `ORD-${Date.now()}`,
+        nombre: pedidoFinal.nombre,
+        direccion: pedidoFinal.direccion,
+        telefono: pedidoFinal.telefono,
+        email: pedidoFinal.email,
+        ciudad: pedidoFinal.ciudad,
+        notas: pedidoFinal.notas,
+        total: pedidoFinal.total,
+        detalles
+      })
     })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          setStatus("ok");
-          localStorage.removeItem("order_purchase_pedido");
-          localStorage.removeItem("order_purchase_detalles");
-          setTimeout(() => {
-            window.location.href = "/checkout/datos";
-          }, 1200);
+          // 2. Notificar por correo/whatsapp
+          fetch("/api/order_purchase", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pedido: pedidoFinal, detalles })
+          })
+            .then(res2 => res2.json())
+            .then(data2 => {
+              if (data2.success) {
+                setStatus("ok");
+                localStorage.removeItem("order_purchase_pedido");
+                localStorage.removeItem("order_purchase_detalles");
+                setTimeout(() => {
+                  window.location.href = "/checkout/datos";
+                }, 1200);
+              } else {
+                setStatus("error");
+                setMsg(data2.error || "Error al notificar la compra.");
+              }
+            })
+            .catch(() => {
+              setStatus("error");
+              setMsg("Error al notificar la compra.");
+            });
+          
         } else {
           setStatus("error");
-          setMsg(data.error || "Error al notificar la compra.");
+          setMsg(data.error || "Error al guardar la orden.");
         }
       })
       .catch(() => {
         setStatus("error");
-        setMsg("Error al notificar la compra.");
+        setMsg("Error al guardar la orden.");
       });
   }, []);
 

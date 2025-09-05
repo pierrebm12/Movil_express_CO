@@ -22,8 +22,10 @@ export default function PanelLogin() {
         localStorage.setItem("panel_token", "ok");
         localStorage.setItem("panel_rol", "cliente");
         router.replace("/panel");
-      } else if (data.success) {
-        setError("Solo los usuarios con rol cliente pueden acceder a esta sección.");
+      } else if (data.success && data.rol === "admin") {
+        localStorage.setItem("panel_token", "ok");
+        localStorage.setItem("panel_rol", "admin");
+        router.replace("/panel/admin");
       } else {
         setError(data.error || "Credenciales incorrectas");
       }
