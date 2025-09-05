@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
       port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
     });
 
-    // Guardar datos del cliente/pedido
+    // Guardar datos del cliente/pedido usando numero_pedido
     await connection.execute(
-      `INSERT INTO orden_datos (pedidoId, nombre, direccion, telefono, email, ciudad, notas) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO orden_datos (numero_pedido, nombre, direccion, telefono, email, ciudad, notas) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [pedidoId, nombre, direccion, telefono, email, ciudad, notas || null]
     );
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     if (Array.isArray(detalles)) {
       for (const item of detalles) {
         await connection.execute(
-          `INSERT INTO orden_detalles (pedidoId, producto_nombre, cantidad, color, precio_actual) VALUES (?, ?, ?, ?, ?)` ,
+          `INSERT INTO orden_detalles (numero_pedido, producto_nombre, cantidad, color, precio_actual) VALUES (?, ?, ?, ?, ?)` ,
           [pedidoId, item.nombre || item.producto_nombre, item.cantidad, item.color || null, item.precio_actual]
         );
       }

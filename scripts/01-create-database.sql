@@ -139,31 +139,14 @@ CREATE TABLE IF NOT EXISTS producto_tags (
     INDEX idx_tag (tag)
 );
 
--- Tabla de pedidos
-CREATE TABLE IF NOT EXISTS pedidos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT,
-    numero_pedido VARCHAR(50) UNIQUE NOT NULL,
-    estado ENUM('pendiente', 'procesando', 'enviado', 'entregado', 'cancelado') DEFAULT 'pendiente',
-    subtotal DECIMAL(10,2) NOT NULL,
-    descuento DECIMAL(10,2) DEFAULT 0.00,
-    impuestos DECIMAL(10,2) DEFAULT 0.00,
-    envio DECIMAL(10,2) DEFAULT 0.00,
-    total DECIMAL(10,2) NOT NULL,
-    metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia', 'mercadopago') NOT NULL,
-    estado_pago ENUM('pendiente', 'pagado', 'fallido', 'reembolsado') DEFAULT 'pendiente',
-    direccion_envio TEXT,
-    telefono_contacto VARCHAR(20),
-    notas TEXT,
-    fecha_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    fecha_entrega TIMESTAMP NULL,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
-    INDEX idx_usuario (usuario_id),
-    INDEX idx_estado (estado),
-    INDEX idx_fecha (fecha_pedido),
-    INDEX idx_numero (numero_pedido)
-);
+
+-- Agregar columna numero_pedido a orden_datos
+ALTER TABLE orden_datos ADD COLUMN numero_pedido VARCHAR(50) UNIQUE;
+
+-- Agregar columna numero_pedido a orden_detalles y usarla como referencia externa
+ALTER TABLE orden_detalles ADD COLUMN numero_pedido VARCHAR(50);
+
+-- Si quieres mantener la tabla pedidos, déjala, pero para el flujo actual solo necesitas las dos líneas anteriores
 
 -- Tabla de detalles de pedidos
 CREATE TABLE IF NOT EXISTS pedido_detalles (
