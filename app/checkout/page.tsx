@@ -91,17 +91,23 @@ export default function CheckoutPage() {
     if (Object.keys(nuevosErrores).length > 0) return;
     setLoading(true);
     try {
-      // Enviar datos a la API para guardar la orden
-      const productos = carrito.map((item) => ({
-        nombre: item.producto?.nombre || item.nombre,
-        color: item.color,
+      // Extraer carrito desde localStorage (movil-express-storage) si existe
+      let carritoSource = carrito;
+      if (!carritoSource || carritoSource.length === 0) {
+        const storage = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
+        carritoSource = storage?.state?.carrito || [];
+      }
+      // Generar detalles en el formato correcto
+      const detalles = carritoSource.map((item: any) => ({
+        producto_nombre: item.producto?.nombre || item.nombre,
         cantidad: item.cantidad,
-        precio_actual: item.producto?.precio_actual || item.precio_actual
+        precio_unitario: Number(item.producto?.precio_actual || item.precio_actual || 0)
       }));
-      const total = productos.reduce((acc, p) => acc + (p.precio_actual * p.cantidad), 0);
-      const envio = {
+      // Guardar detalles en localStorage para trazabilidad
+      localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
+      const total = detalles.reduce((acc: number, p: any) => acc + (p.precio_unitario * p.cantidad), 0);
+      const pedido = {
         nombre: formData.nombre,
-        apellido: formData.apellido,
         email: formData.email,
         telefono: formData.telefono,
         direccion: formData.direccion,
@@ -109,15 +115,20 @@ export default function CheckoutPage() {
         departamento: formData.departamento,
         codigoPostal: formData.codigoPostal,
         notas: formData.notas,
+        total,
+        numero_pedido: `ORD-${Date.now()}`
       };
-      const res = await fetch("/api/ordenes", {
+      // Guardar pedido en localStorage para trazabilidad
+      localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
+      const res = await fetch("/api/ordenes/datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ envio, productos, total }),
+        body: JSON.stringify({ pedido, detalles }),
       });
       setLoading(false);
-      if (res.ok) setSuccess(true);
-      else alert("Error procesando la orden");
+      const data = await res.json();
+      if (data.success) setSuccess(true);
+      else alert(data.error || "Error procesando la orden");
     } catch (err) {
       setLoading(false);
       alert("Error procesando la orden");

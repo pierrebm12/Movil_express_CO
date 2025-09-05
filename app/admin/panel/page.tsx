@@ -7,6 +7,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ProductSection from "@/components/admin/ProductSection";
 import BrandSection from "@/components/admin/BrandSection";
 import CategorySection from "@/components/admin/CategorySection";
+import OrderSection from "@/components/admin/OrderSection";
 
 export default function AdminPanelPage() {
   const [section, setSection] = useState("productos");
@@ -19,6 +20,7 @@ export default function AdminPanelPage() {
           {section === "productos" && <ProductSection />}
           {section === "marcas" && <BrandSection />}
           {section === "categorias" && <CategorySection />}
+          {section === "ordenes" && <OrderSection />}
         </div>
       </main>
     </div>

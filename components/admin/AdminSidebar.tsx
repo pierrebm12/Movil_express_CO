@@ -6,6 +6,7 @@ const sections = [
   { key: "productos", label: "Productos", icon: "📦" },
   { key: "marcas", label: "Marcas", icon: "🏷️" },
   { key: "categorias", label: "Categorías", icon: "🗂️" },
+  { key: "ordenes", label: "Órdenes", icon: "📝" },
 ];
 
 export default function AdminSidebar({ section, setSection }: { section: string, setSection: (s: string) => void }) {

@@ -1,29 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-
-
 import mysql from "mysql2/promise";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const { pedido, detalles } = body;
+    // Validar pedido
+    if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
+      return NextResponse.json({ success: false, error: "Faltan datos de pedido o detalles" }, { status: 400 });
+    }
     const {
-      pedidoId,
       nombre,
-      direccion,
-      telefono,
       email,
+      telefono,
+      direccion,
       ciudad,
       total,
-      detalles,
+      numero_pedido,
       departamento = null,
       codigoPostal = null,
       notas = null
-    } = body;
-    if (!pedidoId || !nombre || !direccion || !telefono || !email || !ciudad || total === undefined) {
-      return NextResponse.json({ success: false, error: "Faltan datos obligatorios" }, { status: 400 });
+    } = pedido;
+    if (!nombre || !email || !telefono || !direccion || !ciudad || total === undefined || !numero_pedido) {
+      return NextResponse.json({ success: false, error: "Faltan campos obligatorios en el pedido" }, { status: 400 });
     }
 
-    // Conexión directa con mysql2
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -32,32 +33,25 @@ export async function POST(req: NextRequest) {
       port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
     });
 
-    // Guardar datos del cliente/pedido usando numero_pedido
+    // Insertar en orden_datos
     const [result]: any = await connection.execute(
-      `INSERT INTO orden_datos (numero_pedido, nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [pedidoId, nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total]
+      `INSERT INTO orden_datos (nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total, numero_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total, numero_pedido]
     );
-    // Obtener el id autoincremental generado
     const ordenId = result.insertId;
 
-    // Guardar productos comprados si existen
-    if (Array.isArray(detalles)) {
-      for (const item of detalles) {
-        await connection.execute(
-          `INSERT INTO orden_detalles (orden_id, producto_nombre, cantidad, precio_unitario, numero_pedido) VALUES (?, ?, ?, ?, ?)` ,
-          [
-            ordenId,
-            item.nombre || item.producto_nombre,
-            item.cantidad,
-            item.precio_actual || item.precio_unitario || 0,
-            pedidoId
-          ]
-        );
-      }
+    // Insertar detalles
+    for (const item of detalles) {
+      const { producto_nombre, cantidad, precio_unitario = 0 } = item;
+      if (!producto_nombre || !cantidad) continue;
+      await connection.execute(
+        `INSERT INTO orden_detalles (orden_id, producto_nombre, cantidad, precio_unitario, numero_pedido) VALUES (?, ?, ?, ?, ?)`,
+        [ordenId, producto_nombre, cantidad, precio_unitario, numero_pedido]
+      );
     }
 
     await connection.end();
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id: ordenId });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
