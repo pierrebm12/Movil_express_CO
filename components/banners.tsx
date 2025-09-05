@@ -13,7 +13,7 @@ const ProductCarousel: React.FC = () => {
         {
             id: 1,
             name: "iPhone 14 Pro Max",
-            price: "COP 3,750.000",
+            price: 3750000,
             storage: "128GB",
             condition: "91%",
             image: "/assets/productos/celulares/usado/iphone/14promax_128g_91.jpg"
@@ -21,7 +21,7 @@ const ProductCarousel: React.FC = () => {
         {
             id: 2,
             name: "iPhone 13",
-            price: "COP 2,090.000",
+            price: 2090000,
             storage: "128GB",
             condition: "86%",
             image: "/assets/productos/celulares/usado/iphone/13_128gb_98.jpg"
@@ -29,7 +29,7 @@ const ProductCarousel: React.FC = () => {
         {
             id: 3,
             name: "iPhone 12",
-            price: "COP 1,730.000",
+            price: 1730000,
             storage: "64GB",
             condition: "91%",
             image: "/assets/productos/celulares/usado/iphone/12_64gb_94.jpg"
@@ -37,16 +37,15 @@ const ProductCarousel: React.FC = () => {
         {
             id: 4,
             name: "iPhone 12 Pro",
-            price: "COP 2,500.000",
+            price: 2500000,
             storage: "128GB",
             condition: "100%",
             image: "/assets/productos/celulares/usado/iphone/12promax_128gb_100.jpg"
-            
         },
         {
             id: 5,
             name: "iPhone 15 Pro",
-            price: "COP 4,170.000",
+            price: 4170000,
             storage: "256GB",
             condition: "92%",
             image: "/assets/productos/celulares/usado/iphone/15pro_256_92.jpg"
@@ -54,7 +53,7 @@ const ProductCarousel: React.FC = () => {
         {
             id: 6,
             name: "iPhone 16",
-            price: "COP 3,650.000",
+            price: 3650000,
             storage: "128GB",
             condition: "100%",
             image: "/assets/productos/celulares/usado/iphone/16_128gb_100.jpg"
@@ -169,7 +168,7 @@ const ProductCarousel: React.FC = () => {
                                 {/* Price */}
                                 <div className="mb-8">
                                     <p className="text-3xl md:text-4xl font-bold text-[#988443]">
-                                        {product.price}
+                                        {product.price.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 })}
                                     </p>
                                 </div>
 

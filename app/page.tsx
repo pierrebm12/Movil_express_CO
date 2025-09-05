@@ -27,7 +27,11 @@ export default function HomePage() {
   const [loadingEcoCat, setLoadingEcoCat] = useState(true);
   const { productos: productosDestacados, loading, error } = useProductosDestacados();
   // Obtener productos ECO solo si tenemos el ID
-  const { productos: productosEco, loading: loadingEco, error: errorEco } = useProductos(ecoCategoriaId ? { limit: 8, sortBy: "fecha_creacion", sortOrder: "desc", categoria: ecoCategoriaId } : { limit: 0 });
+  const { productos: productosEco, loading: loadingEco, error: errorEco } = useProductos(
+    ecoCategoriaId
+      ? { limit: 8, sortBy: "fecha_creacion", sortOrder: "desc", categoria: ecoCategoriaId.toString() }
+      : { limit: 0 }
+  );
 
   useEffect(() => {
     // Buscar el ID de la categoría ECO dinámicamente
