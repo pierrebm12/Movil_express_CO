@@ -83,158 +83,171 @@ export default function PanelAdmin() {
 
   if (loading) return <div className="p-8 text-center">Cargando...</div>;
 
+  // Solo mostrar si el usuario es admin
+  const token = typeof window !== "undefined" ? localStorage.getItem("panel_token") : null;
+  const rol = typeof window !== "undefined" ? localStorage.getItem("panel_rol") : null;
+  if (!token || rol !== "admin") {
+    return <div className="p-8 text-center text-red-600">Acceso restringido solo para administradores.</div>;
+  }
+
   return (
     <div className="p-8 bg-gradient-to-br from-[#232526] to-[#988443] min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-white">Panel Administrativo - Pedidos y Logística</h1>
-      <div className="mb-4 flex flex-wrap gap-4">
-        <input
-          type="text"
-          placeholder="ID Producto"
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.productoId}
-          onChange={e => setFiltro(f => ({ ...f, productoId: e.target.value }))}
-        />
-        <input
-          type="text"
-          placeholder="ID Factura"
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.facturaId}
-          onChange={e => setFiltro(f => ({ ...f, facturaId: e.target.value }))}
-        />
-        <input
-          type="text"
-          placeholder="Correo"
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.email}
-          onChange={e => setFiltro(f => ({ ...f, email: e.target.value }))}
-        />
-        <input
-          type="text"
-          placeholder="Teléfono"
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.telefono}
-          onChange={e => setFiltro(f => ({ ...f, telefono: e.target.value }))}
-        />
-        <input
-          type="text"
-          placeholder="Nombre"
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.nombre}
-          onChange={e => setFiltro(f => ({ ...f, nombre: e.target.value }))}
-        />
-        <select
-          className="px-4 py-2 rounded-xl border border-[#988443]"
-          value={filtro.estadoProducto}
-          onChange={e => setFiltro(f => ({ ...f, estadoProducto: e.target.value }))}
-        >
-          <option value="">Todos</option>
-          <option value="Nuevo">Nuevo</option>
-          <option value="Usado">Usado</option>
-          <option value="Reacondicionado">Reacondicionado</option>
-        </select>
-        <button
-          onClick={fetchData}
-          className="px-6 py-2 bg-[#988443] text-white rounded-xl hover:bg-[#8a7a3e] shadow-lg"
-        >
-          Refrescar tabla
-        </button>
-      </div>
-      <div className="overflow-x-auto rounded-xl shadow-lg bg-white mb-8">
-        <h2 className="text-xl font-bold p-4 text-[#232526]">Órdenes</h2>
-        <table className="min-w-full border border-[#988443]">
-          <thead className="bg-[#232526] text-white">
-            <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Cliente</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Teléfono</th>
-              <th className="border px-4 py-2">Dirección</th>
-              <th className="border px-4 py-2">Total</th>
-              <th className="border px-4 py-2">Productos</th>
-              <th className="border px-4 py-2">Fecha</th>
-              <th className="border px-4 py-2">Estado</th>
-              <th className="border px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ordenesFiltradas.map((orden) => (
-              <tr key={orden.id} className="hover:bg-[#f6f3e7] transition">
-                <td className="border px-2 py-1 text-center font-bold text-[#988443]">{orden.id}</td>
-                <td className="border px-2 py-1">{orden.nombre}</td>
-                <td className="border px-2 py-1">{orden.email}</td>
-                <td className="border px-2 py-1">{orden.telefono}</td>
-                <td className="border px-2 py-1">{orden.direccion}</td>
-                <td className="border px-2 py-1 text-right text-green-700 font-bold">${orden.total}</td>
-                <td className="border px-2 py-1">
-                  <ul className="list-disc pl-4">
-                    {orden.productos?.map((prod: any, idx: number) => (
-                      <li key={idx} className="text-[#232526]">
-                        {prod.nombre} x{prod.cantidad} <span className="ml-2 text-xs text-gray-500">[{estadosProductos[prod.id] || "-"}]</span>
-                      </li>
-                    ))}
-                  </ul>
-                </td>
-                <td className="border px-2 py-1">{orden.fecha}</td>
-                <td className="border px-2 py-1">{orden.estado}</td>
-                <td className="border px-2 py-1 flex flex-col gap-2">
-                  <button
-                    className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    onClick={async () => {
-                      // Editar orden (puedes abrir modal aquí)
-                    }}
-                  >Editar</button>
-                  <button
-                    className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                    onClick={async () => {
-                      if (confirm("¿Seguro que deseas eliminar esta orden?")) {
-                        await fetch("/api/panel/ordenes_admin", {
-                          method: "DELETE",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ id: orden.id })
-                        });
-                        fetchData();
-                      }
-                    }}
-                  >Eliminar</button>
-                </td>
+      <h1 className="text-3xl font-bold mb-6 text-white">Panel Administrativo</h1>
+      {/* Sección de Órdenes */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-4 text-[#232526]">Órdenes</h2>
+        <div className="mb-4 flex flex-wrap gap-4">
+          <input
+            type="text"
+            placeholder="ID Producto"
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.productoId}
+            onChange={e => setFiltro(f => ({ ...f, productoId: e.target.value }))}
+          />
+          <input
+            type="text"
+            placeholder="ID Factura"
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.facturaId}
+            onChange={e => setFiltro(f => ({ ...f, facturaId: e.target.value }))}
+          />
+          <input
+            type="text"
+            placeholder="Correo"
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.email}
+            onChange={e => setFiltro(f => ({ ...f, email: e.target.value }))}
+          />
+          <input
+            type="text"
+            placeholder="Teléfono"
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.telefono}
+            onChange={e => setFiltro(f => ({ ...f, telefono: e.target.value }))}
+          />
+          <input
+            type="text"
+            placeholder="Nombre"
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.nombre}
+            onChange={e => setFiltro(f => ({ ...f, nombre: e.target.value }))}
+          />
+          <select
+            className="px-4 py-2 rounded-xl border border-[#988443]"
+            value={filtro.estadoProducto}
+            onChange={e => setFiltro(f => ({ ...f, estadoProducto: e.target.value }))}
+          >
+            <option value="">Todos</option>
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+            <option value="Reacondicionado">Reacondicionado</option>
+          </select>
+          <button
+            onClick={fetchData}
+            className="px-6 py-2 bg-[#988443] text-white rounded-xl hover:bg-[#8a7a3e] shadow-lg"
+          >
+            Refrescar tabla
+          </button>
+        </div>
+        <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
+          <table className="min-w-full border border-[#988443]">
+            <thead className="bg-[#232526] text-white">
+              <tr>
+                <th className="border px-4 py-2">ID</th>
+                <th className="border px-4 py-2">Cliente</th>
+                <th className="border px-4 py-2">Email</th>
+                <th className="border px-4 py-2">Teléfono</th>
+                <th className="border px-4 py-2">Dirección</th>
+                <th className="border px-4 py-2">Total</th>
+                <th className="border px-4 py-2">Productos</th>
+                <th className="border px-4 py-2">Fecha</th>
+                <th className="border px-4 py-2">Estado</th>
+                <th className="border px-4 py-2">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
-        <h2 className="text-xl font-bold p-4 text-[#232526]">Productos Preparados</h2>
-        <table className="min-w-full border border-[#988443]">
-          <thead className="bg-[#232526] text-white">
-            <tr>
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Orden</th>
-              <th className="border px-4 py-2">Producto</th>
-              <th className="border px-4 py-2">Cantidad</th>
-              <th className="border px-4 py-2">Estado</th>
-              <th className="border px-4 py-2">Cliente</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Teléfono</th>
-              <th className="border px-4 py-2">Fecha preparado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {preparados.map((prep: any) => (
-              <tr key={prep.id} className="hover:bg-[#f6f3e7] transition">
-                <td className="border px-2 py-1 text-center font-bold text-[#988443]">{prep.id}</td>
-                <td className="border px-2 py-1">{prep.orden_id}</td>
-                <td className="border px-2 py-1">{prep.producto_nombre}</td>
-                <td className="border px-2 py-1">{prep.cantidad}</td>
-                <td className="border px-2 py-1">{estadosProductos[prep.producto_id || prep.id] || "-"}</td>
-                <td className="border px-2 py-1">{prep.cliente}</td>
-                <td className="border px-2 py-1">{prep.email}</td>
-                <td className="border px-2 py-1">{prep.telefono}</td>
-                <td className="border px-2 py-1">{prep.fecha_preparado}</td>
+            </thead>
+            <tbody>
+              {ordenesFiltradas.map((orden) => (
+                <tr key={orden.id} className="hover:bg-[#f6f3e7] transition">
+                  <td className="border px-2 py-1 text-center font-bold text-[#988443]">{orden.id}</td>
+                  <td className="border px-2 py-1">{orden.nombre}</td>
+                  <td className="border px-2 py-1">{orden.email}</td>
+                  <td className="border px-2 py-1">{orden.telefono}</td>
+                  <td className="border px-2 py-1">{orden.direccion}</td>
+                  <td className="border px-2 py-1 text-right text-green-700 font-bold">${orden.total}</td>
+                  <td className="border px-2 py-1">
+                    <ul className="list-disc pl-4">
+                      {orden.productos?.map((prod: any, idx: number) => (
+                        <li key={idx} className="text-[#232526]">
+                          {prod.nombre} x{prod.cantidad} <span className="ml-2 text-xs text-gray-500">[{estadosProductos[prod.id] || "-"}]</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="border px-2 py-1">{orden.fecha}</td>
+                  <td className="border px-2 py-1">{orden.estado}</td>
+                  <td className="border px-2 py-1 flex flex-col gap-2">
+                    <button
+                      className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      onClick={async () => {
+                        // Editar orden (puedes abrir modal aquí)
+                      }}
+                    >Editar</button>
+                    <button
+                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                      onClick={async () => {
+                        if (confirm("¿Seguro que deseas eliminar esta orden?")) {
+                          await fetch("/api/panel/ordenes_admin", {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id: orden.id })
+                          });
+                          fetchData();
+                        }
+                      }}
+                    >Eliminar</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {/* Sección de Productos Preparados */}
+      <section>
+        <h2 className="text-2xl font-bold mb-4 text-[#232526]">Productos Preparados</h2>
+        <div className="overflow-x-auto rounded-xl shadow-lg bg-white">
+          <table className="min-w-full border border-[#988443]">
+            <thead className="bg-[#232526] text-white">
+              <tr>
+                <th className="border px-4 py-2">ID</th>
+                <th className="border px-4 py-2">Orden</th>
+                <th className="border px-4 py-2">Producto</th>
+                <th className="border px-4 py-2">Cantidad</th>
+                <th className="border px-4 py-2">Estado</th>
+                <th className="border px-4 py-2">Cliente</th>
+                <th className="border px-4 py-2">Email</th>
+                <th className="border px-4 py-2">Teléfono</th>
+                <th className="border px-4 py-2">Fecha preparado</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {preparados.map((prep: any) => (
+                <tr key={prep.id} className="hover:bg-[#f6f3e7] transition">
+                  <td className="border px-2 py-1 text-center font-bold text-[#988443]">{prep.id}</td>
+                  <td className="border px-2 py-1">{prep.orden_id}</td>
+                  <td className="border px-2 py-1">{prep.producto_nombre}</td>
+                  <td className="border px-2 py-1">{prep.cantidad}</td>
+                  <td className="border px-2 py-1">{estadosProductos[prep.producto_id || prep.id] || "-"}</td>
+                  <td className="border px-2 py-1">{prep.cliente}</td>
+                  <td className="border px-2 py-1">{prep.email}</td>
+                  <td className="border px-2 py-1">{prep.telefono}</td>
+                  <td className="border px-2 py-1">{prep.fecha_preparado}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }

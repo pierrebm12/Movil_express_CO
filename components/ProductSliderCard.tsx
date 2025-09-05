@@ -86,9 +86,7 @@ export function ProductSliderCard({ producto }: { producto: ProductoSlider }) {
             </span>
           )}
           <span className="text-primary-600 font-bold text-xl">
-            {typeof producto.precio_actual === "number"
-              ? producto.precio_actual.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })
-              : "Consultar"}
+            {Number(producto.precio_actual).toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}
           </span>
           {tieneOferta && ahorro > 0 && (
             <span className="text-green-600 text-xs font-semibold mt-1">
