@@ -6,8 +6,8 @@ import mysql from "mysql2/promise";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { pedidoId, nombre, direccion, telefono, email, ciudad, notas, detalles } = body;
-    if (!pedidoId || !nombre || !direccion || !telefono || !email || !ciudad) {
+    const { pedidoId, nombre, direccion, telefono, email, ciudad, notas, detalles, total } = body;
+    if (!pedidoId || !nombre || !direccion || !telefono || !email || !ciudad || total === undefined) {
       return NextResponse.json({ success: false, error: "Faltan datos obligatorios" }, { status: 400 });
     }
 
@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
 
     // Guardar datos del cliente/pedido usando numero_pedido
     await connection.execute(
-      `INSERT INTO orden_datos (numero_pedido, nombre, direccion, telefono, email, ciudad, notas) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [pedidoId, nombre, direccion, telefono, email, ciudad, notas || null]
+      `INSERT INTO orden_datos (numero_pedido, nombre, direccion, telefono, email, ciudad, notas, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [pedidoId, nombre, direccion, telefono, email, ciudad, notas || null, total]
     );
 
     // Guardar productos comprados si existen
