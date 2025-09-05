@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
+import { sendOrderEmail } from "@/lib/send-email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,6 +52,27 @@ export async function POST(req: NextRequest) {
     }
 
     await connection.end();
+
+    // Enviar correo al cliente
+    try {
+      const productosHtml = detalles.map((d: any) => `<li>${d.producto_nombre} x${d.cantidad} - $${d.precio_unitario}</li>`).join("");
+      const html = `
+        <h2>¡Gracias por tu compra, ${nombre}!</h2>
+        <p>Hemos recibido tu pedido <b>${numero_pedido}</b> por un total de <b>$${total}</b>.</p>
+        <p>Dirección de envío: ${direccion}, ${ciudad}, ${departamento || ""}</p>
+        <ul>${productosHtml}</ul>
+        <p>Nos pondremos en contacto contigo para coordinar el envío.</p>
+      `;
+      await sendOrderEmail({
+        to: email,
+        subject: `Confirmación de compra Movil Express (${numero_pedido})`,
+        html,
+      });
+    } catch (err) {
+      // No bloquear el flujo si el correo falla
+      console.error("Error enviando correo de confirmación:", err);
+    }
+
     return NextResponse.json({ success: true, id: ordenId });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

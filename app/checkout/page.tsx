@@ -154,6 +154,13 @@ export default function CheckoutPage() {
   }
 
   if (success) {
+    // Limpiar carrito y datos de compra del localStorage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("movil-express-storage");
+      localStorage.removeItem("order_purchase_detalles");
+      localStorage.removeItem("order_purchase_pedido");
+      localStorage.removeItem("checkout_carrito");
+    }
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] to-[#414345] px-4">
         <Card className="max-w-md w-full bg-opacity-90 backdrop-blur-md border-0 shadow-2xl">
