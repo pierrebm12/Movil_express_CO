@@ -4,14 +4,10 @@ import { executeQuery, executeQuerySingle } from "@/lib/database";
 export async function getOrders() {
   const query = `SELECT * FROM orden_datos ORDER BY id DESC`;
   const rows = await executeQuery(query);
-  // Map codigo_postal to codigoPostal
-  return rows.map((row: any) => {
-    const { codigo_postal, ...rest } = row;
-    return {
-      ...rest,
-      codigoPostal: codigo_postal
-    };
-  });
+  // No mapear, usar directamente codigo_postal
+    return rows.map((row: any) => ({
+      ...row
+    }));
 }
 
 // Obtener detalles de una orden
@@ -36,7 +32,7 @@ export async function confirmarOrden(orderId: number) {
     await executeQuery(
       `INSERT INTO productos_confirmados (
         orden_id, producto_id, producto_nombre, cantidad, precio_unitario, subtotal, fecha_confirmacion, numero_pedido,
-        nombre, email, telefono, direccion, ciudad, departamento, codigo_postal
+  nombre, email, telefono, direccion, ciudad, departamento, codigo_postal
       ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderId,

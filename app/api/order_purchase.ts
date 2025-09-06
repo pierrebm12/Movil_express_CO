@@ -14,7 +14,7 @@ function formatEmailHtml(pedido: any, detalles: any[]) {
     Email: ${pedido.email}<br>
     Teléfono: ${pedido.telefono}<br>
     Dirección: ${pedido.direccion}, ${pedido.ciudad}, ${pedido.departamento || "-"}<br>
-    Código Postal: ${pedido.codigoPostal || "-"}<br>
+    Código Postal: ${pedido.codigo_postal || "-"}<br>
     Notas: ${pedido.notas || "-"}</p>
     <p><b>Productos:</b><br>${productos}</p>
     <p>Total: <b>$${pedido.total || "-"}</b></p>
@@ -31,7 +31,7 @@ function formatWhatsappMessage(pedido: any, detalles: any[]) {
     `*Teléfono:* ${pedido.telefono}\n` +
     `*Email:* ${pedido.email}\n` +
     `*Dirección:* ${pedido.direccion}, ${pedido.ciudad}, ${pedido.departamento || "-"}\n` +
-    `*Código Postal:* ${pedido.codigoPostal || "-"}\n` +
+    `*Código Postal:* ${pedido.codigo_postal || "-"}\n` +
     `*Notas:* ${pedido.notas || "-"}\n\n` +
     `*Productos:*\n${productos}\n\n` +
     `*Total:* $${pedido.total || "-"}`

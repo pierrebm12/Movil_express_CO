@@ -10,7 +10,7 @@ type Order = {
   direccion: string;
   ciudad?: string;
   departamento?: string;
-  codigoPostal?: string;
+  codigo_postal?: string;
   notas?: string;
   total: number;
   fecha?: string;
@@ -43,7 +43,7 @@ type ConfirmedProduct = {
   direccion?: string;
   ciudad?: string;
   departamento?: string;
-  codigoPostal?: string;
+  codigo_postal?: string;
 };
 
 export default function OrderSection() {
@@ -61,6 +61,11 @@ export default function OrderSection() {
   const [confirmedLoading, setConfirmedLoading] = useState(false);
   const [confirmedRefresh, setConfirmedRefresh] = useState(0);
   const [selectedConfirmed, setSelectedConfirmed] = useState<number | null>(null);
+
+  // Limpiar selección de producto confirmado al refrescar lista o cambiar de pestaña
+  useEffect(() => {
+    setSelectedConfirmed(null);
+  }, [confirmedRefresh, activeTab]);
   // Modals y acciones
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
@@ -207,7 +212,7 @@ export default function OrderSection() {
                       <td className="py-2 px-2 whitespace-nowrap hidden md:table-cell">{order.direccion}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{order.ciudad || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{order.departamento || <span className="text-gray-400">-</span>}</td>
-                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{order.codigoPostal || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{order.codigo_postal || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{order.notas || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 text-[#988443] font-bold whitespace-nowrap">{"$" + order.total.toLocaleString("es-CO", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
                       <td className="py-2 px-2 flex justify-center items-center whitespace-nowrap">
@@ -384,7 +389,7 @@ export default function OrderSection() {
                       <td className="py-2 px-2 whitespace-nowrap hidden md:table-cell">{p.direccion || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{p.ciudad || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{p.departamento || <span className="text-gray-400">-</span>}</td>
-                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{p.codigoPostal || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{p.codigo_postal || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{p.producto_nombre}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.cantidad}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.precio_unitario.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</td>
@@ -419,7 +424,7 @@ export default function OrderSection() {
               </tbody>
             </table>
           </div>
-          {selectedConfirmed && (() => {
+          {selectedConfirmed !== null && (() => {
             const p = confirmed.find(c => c.id === selectedConfirmed);
             if (!p) return null;
             return (
@@ -439,7 +444,7 @@ export default function OrderSection() {
                     <div><span className="font-semibold text-[#988443]">Dirección:</span> {p.direccion || <span className="text-gray-400">-</span>}</div>
                     <div><span className="font-semibold text-[#988443]">Ciudad:</span> {p.ciudad || <span className="text-gray-400">-</span>}</div>
                     <div><span className="font-semibold text-[#988443]">Departamento:</span> {p.departamento || <span className="text-gray-400">-</span>}</div>
-                    <div><span className="font-semibold text-[#988443]">Código Postal:</span> {p.codigoPostal || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Código Postal:</span> {p.codigo_postal || <span className="text-gray-400">-</span>}</div>
                     <div><span className="font-semibold text-[#988443]">Producto:</span> {p.producto_nombre}</div>
                     <div><span className="font-semibold text-[#988443]">Cantidad:</span> {p.cantidad}</div>
                     <div><span className="font-semibold text-[#988443]">Precio Unitario:</span> {p.precio_unitario.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</div>

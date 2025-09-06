@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       total,
       numero_pedido,
       departamento = null,
-      codigoPostal = null,
+  codigo_postal = null,
       notas = null
     } = pedido;
     if (!nombre || !email || !telefono || !direccion || !ciudad || total === undefined || !numero_pedido) {
@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
 
     // Insertar en orden_datos
     const [result]: any = await connection.execute(
-      `INSERT INTO orden_datos (nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total, numero_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nombre, email, telefono, direccion, ciudad, departamento, codigoPostal, notas, total, numero_pedido]
+  `INSERT INTO orden_datos (nombre, email, telefono, direccion, ciudad, departamento, codigo_postal, notas, total, numero_pedido) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [nombre, email, telefono, direccion, ciudad, departamento, codigo_postal, notas, total, numero_pedido]
     );
     const ordenId = result.insertId;
 

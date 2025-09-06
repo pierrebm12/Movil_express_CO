@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       Email: ${pedido.email}<br>
       Teléfono: ${pedido.telefono}<br>
       Dirección: ${pedido.direccion}, ${pedido.ciudad}, ${pedido.departamento}<br>
-      Código Postal: ${pedido.codigoPostal || "-"}<br>
+    Código Postal: ${pedido.codigo_postal || "-"}<br>
       Notas: ${pedido.notas || "-"}</p>
       <p><b>Productos:</b><br>${productos.replace(/\n/g, "<br>")}</p>
       <p>Total: <b>$${pedido.total || "-"}</b></p>`;
