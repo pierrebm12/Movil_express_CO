@@ -14,14 +14,27 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
   const carrito = useStore((state) => state.carrito);
 
   // Guardar datos de compra en localStorage antes de redirigir a Bold
-  // Eliminar guardado de order_purchase_pedido aquí. Solo guardar orderId si es necesario.
+  // Aquí se crea la llave order_purchase_detalles con los datos requeridos por la tabla orden_detalles
   const saveOrderData = () => {
     if (orderId !== undefined) {
       localStorage.setItem("ultimo_pedido_id", orderId);
     }
+    // Extraer carrito desde movil-express-storage
+    const storage = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
+    const carritoArr = storage?.state?.carrito || [];
+    // Generar detalles para la tabla orden_detalles
+    const detalles = carritoArr.map((item: any) => ({
+      // id y orden_id se asignan en backend, aquí solo se preparan los datos
+      producto_nombre: item.producto?.nombre || item.nombre,
+      cantidad: item.cantidad,
+      precio_unitario: Number(item.producto?.precio_actual || item.precio_actual || 0),
+      numero_pedido: orderId
+    }));
+    localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
     // Logs para depuración
     console.log("[BoldButton] Guardado en localStorage:", {
-      ultimo_pedido_id: orderId
+      ultimo_pedido_id: orderId,
+      order_purchase_detalles: detalles
     });
   };
 

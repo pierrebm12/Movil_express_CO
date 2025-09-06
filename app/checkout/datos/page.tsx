@@ -12,7 +12,11 @@ export default function CheckoutDatosPage() {
     telefono: "",
     email: "",
     ciudad: "",
+    departamento: "",
+    codigoPostal: "",
     notas: "",
+    total: "",
+    numero_pedido: ""
   });
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState("");
@@ -28,20 +32,39 @@ export default function CheckoutDatosPage() {
     setEnviando(true);
     setError("");
     try {
-      // Leer pedido y detalles SOLO de las keys unificadas
-      const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
+      // Leer detalles de productos
       const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
-      if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
-        setError("Faltan datos del pedido o productos. Por favor, vuelve al carrito y repite el proceso.");
+      if (!detalles || !Array.isArray(detalles) || detalles.length === 0) {
+        setError("Faltan datos del producto. Por favor, vuelve al carrito y repite el proceso.");
         setEnviando(false);
         return;
       }
-      // Puedes actualizar los datos de envío en el pedido si lo deseas
-      const pedidoFinal = { ...pedido, ...form };
+      // Calcular total
+      const total = detalles.reduce((acc: number, d: any) => acc + (d.precio_unitario * d.cantidad), 0);
+      // Generar numero_pedido si no existe
+      let numero_pedido = form.numero_pedido;
+      if (!numero_pedido) {
+        numero_pedido = detalles[0]?.numero_pedido || `ORD-${Date.now()}`;
+      }
+      // Construir objeto pedido con todos los campos requeridos
+      const pedido = {
+        nombre: form.nombre,
+        email: form.email,
+        telefono: form.telefono,
+        direccion: form.direccion,
+        ciudad: form.ciudad,
+        departamento: form.departamento,
+        codigoPostal: form.codigoPostal,
+        notas: form.notas,
+        total,
+        numero_pedido
+      };
+      // Guardar en localStorage para trazabilidad
+      localStorage.setItem("order_purchase_pedido", JSON.stringify(pedido));
       const res = await fetch("/api/ordenes/datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pedido: pedidoFinal, detalles }),
+        body: JSON.stringify({ pedido, detalles }),
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error || "Error guardando datos");
@@ -97,6 +120,23 @@ export default function CheckoutDatosPage() {
           value={form.ciudad}
           onChange={handleChange}
           required
+          className="w-full border rounded px-4 py-2"
+        />
+        <input
+          type="text"
+          name="departamento"
+          placeholder="Departamento"
+          value={form.departamento}
+          onChange={handleChange}
+          required
+          className="w-full border rounded px-4 py-2"
+        />
+        <input
+          type="text"
+          name="codigoPostal"
+          placeholder="Código Postal"
+          value={form.codigoPostal}
+          onChange={handleChange}
           className="w-full border rounded px-4 py-2"
         />
         <input
