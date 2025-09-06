@@ -51,21 +51,30 @@ export default function CheckoutPage() {
   const [cantidadItems, setCantidadItems] = useState(0);
 
   useEffect(() => {
-    // Intentar leer el carrito desde localStorage
+    // Intentar leer el carrito desde checkout_carrito, si no existe, usar movil-express-storage
+    let arr: any[] = [];
     const carritoLS = localStorage.getItem("checkout_carrito");
     if (carritoLS) {
       try {
-        const arr = JSON.parse(carritoLS);
-        // Aquí puedes unificar la estructura si es necesario y setear el carrito, total y cantidad
-        setCarrito(arr);
-        setCantidadItems(arr.reduce((acc: number, item: any) => acc + (item.cantidad || 1), 0));
-        setTotalCarrito(arr.reduce((acc: number, item: any) => acc + ((item.precio || item.producto?.precio_actual || 0) * (item.cantidad || 1)), 0));
+        arr = JSON.parse(carritoLS);
       } catch (e) {
-        setCarrito([]);
-        setCantidadItems(0);
-        setTotalCarrito(0);
+        arr = [];
       }
+    } else {
+      // Si no existe checkout_carrito, extraer del store persistido
+      const storage = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
+      arr = storage?.state?.carrito?.map((item: any) => ({
+        ...item,
+        // Unificar estructura para el checkout
+        nombre: item.producto?.nombre || item.nombre,
+        precio: item.producto?.precio_actual || item.precio_actual || 0,
+        cantidad: item.cantidad,
+        producto: item.producto
+      })) || [];
     }
+    setCarrito(arr);
+    setCantidadItems(arr.reduce((acc: number, item: any) => acc + (item.cantidad || 1), 0));
+    setTotalCarrito(arr.reduce((acc: number, item: any) => acc + ((item.precio || item.producto?.precio_actual || 0) * (item.cantidad || 1)), 0));
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -91,17 +100,24 @@ export default function CheckoutPage() {
     if (Object.keys(nuevosErrores).length > 0) return;
     setLoading(true);
     try {
-      // Extraer carrito desde localStorage (movil-express-storage) si existe
+      // Extraer carrito desde localStorage (checkout_carrito o movil-express-storage)
       let carritoSource = carrito;
       if (!carritoSource || carritoSource.length === 0) {
+        // Si el estado react está vacío, intentar extraer de movil-express-storage
         const storage = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
-        carritoSource = storage?.state?.carrito || [];
+        carritoSource = storage?.state?.carrito?.map((item: any) => ({
+          ...item,
+          nombre: item.producto?.nombre || item.nombre,
+          precio: item.producto?.precio_actual || item.precio_actual || 0,
+          cantidad: item.cantidad,
+          producto: item.producto
+        })) || [];
       }
-      // Generar detalles en el formato correcto
+      // Generar detalles en el formato correcto para el backend
       const detalles = carritoSource.map((item: any) => ({
         producto_nombre: item.producto?.nombre || item.nombre,
         cantidad: item.cantidad,
-        precio_unitario: Number(item.producto?.precio_actual || item.precio_actual || 0)
+        precio_unitario: Number(item.producto?.precio_actual || item.precio || item.precio_actual || 0)
       }));
       // Guardar detalles en localStorage para trazabilidad
       localStorage.setItem("order_purchase_detalles", JSON.stringify(detalles));
