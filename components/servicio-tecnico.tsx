@@ -135,7 +135,7 @@ export default function ServCli() {
             Diagnóstico gratis, repuestos originales y garantía real. Más de 5.000 clientes satisfechos.
           </p>
           <a href="https://wa.me/573103003623" target="_blank" rel="noopener noreferrer">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-black font-bold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-200 animate-bounce">
+            <Button className="bg-primary-500 hover:bg-primary-600 text-black w-full m-2 font-bold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-200 animate-bounce">
               Solicita tu diagnóstico gratis por WhatsApp
             </Button>
           </a>
@@ -327,7 +327,7 @@ export default function ServCli() {
           <h2 className="text-3xl md:text-4xl font-bold text-primary-400 mb-6 drop-shadow-lg">¿Listo para reparar tu equipo?</h2>
           <p className="text-lg md:text-xl text-white mb-8 drop-shadow">Agenda tu diagnóstico gratis o cotiza por WhatsApp. ¡Tu celular merece lo mejor!</p>
           <a href="https://wa.me/573103003623" target="_blank" rel="noopener noreferrer">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-black font-bold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-200 animate-bounce">
+            <Button className="bg-primary-500 hover:bg-primary-600 text-black w-full m-2 font-bold text-lg px-8 py-4 rounded-2xl shadow-lg transition-all duration-200 animate-bounce">
               Solicitar diagnóstico gratis por WhatsApp
             </Button>
           </a>
