@@ -216,8 +216,21 @@ export default function OrderSection() {
                           ...
                         </button>
                         {orderToEdit?.id === order.id && showEditModal && (
-                          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fadein">
-                            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border-2 border-[#988443] flex flex-col items-center transform transition-all duration-300 scale-90 opacity-0 animate-modalpop">
+                          <div
+                            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fadein"
+                            onClick={e => {
+                              // Prevent closing when clicking the background
+                              if (e.target === e.currentTarget) return;
+                            }}
+                          >
+                            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border-2 border-[#988443] flex flex-col items-center relative transform transition-all duration-300 scale-90 opacity-0 animate-modalpop">
+                              <button
+                                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
+                                onClick={() => setShowEditModal(false)}
+                                aria-label="Cerrar"
+                              >
+                                ×
+                              </button>
                               <h3 className="text-xl font-bold mb-4 text-[#988443]">Acciones para la orden #{order.id}</h3>
                               <div className="flex flex-col gap-4 w-full">
                                 <button
