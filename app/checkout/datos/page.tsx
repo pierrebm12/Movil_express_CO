@@ -28,52 +28,27 @@ export default function CheckoutDatosPage() {
     setEnviando(true);
     setError("");
     try {
-      // Aquí puedes asociar los datos al último pedido creado (puedes usar localStorage o un ID de orden)
-      const pedidoId = localStorage.getItem("ultimo_pedido_id");
-      const pedido = JSON.parse(localStorage.getItem("checkout_pedido") || "null");
-      // Extraer productos directamente de movil-express-storage
-      let detalles: any[] = [];
-      try {
-        const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
-        if (zustandState && Array.isArray(zustandState.state?.carrito)) {
-          detalles = zustandState.state.carrito.map((item: any) => ({
-            ...item.producto,
-            cantidad: item.cantidad,
-            color: item.color
-          }));
-        }
-      } catch (e) {}
-      console.log({ pedidoId, detalles, ...form });
-      if (!pedidoId || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
+      // Leer pedido y detalles SOLO de las keys unificadas
+      const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
+      const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
+      if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
         setError("Faltan datos del pedido o productos. Por favor, vuelve al carrito y repite el proceso.");
         setEnviando(false);
         return;
       }
-      if (!form.nombre || !form.direccion || !form.telefono || !form.email || !form.ciudad) {
-        setError("Completa todos los campos obligatorios del formulario.");
-        setEnviando(false);
-        return;
-      }
+      // Puedes actualizar los datos de envío en el pedido si lo deseas
+      const pedidoFinal = { ...pedido, ...form };
       const res = await fetch("/api/ordenes/datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, pedidoId, detalles }),
+        body: JSON.stringify({ pedido: pedidoFinal, detalles }),
       });
       const result = await res.json();
       if (!result.success) throw new Error(result.error || "Error guardando datos");
 
-      // Notificar por WhatsApp
-      if (pedido && detalles) {
-        await fetch("/api/ordenes/whatsapp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pedido, detalles, datosEnvio: { ...form, pedidoId } }),
-        });
-      }
-
-  setExito(true);
-  alert("¡Formulario enviado correctamente! La compra ha sido finalizada.");
-  setTimeout(() => router.replace("/catalogo"), 300);
+      setExito(true);
+      alert("¡Formulario enviado correctamente! La compra ha sido finalizada.");
+      setTimeout(() => router.replace("/catalogo"), 300);
     } catch (err: any) {
       setError(err.message || "Error enviando datos");
     } finally {

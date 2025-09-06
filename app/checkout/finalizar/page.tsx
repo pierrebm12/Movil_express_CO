@@ -10,82 +10,28 @@ export default function FinalizarCompra() {
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    // Extraer datos de pedido y de envío
+    // Leer pedido y detalles SOLO de las keys unificadas
     const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
-    let detalles = [];
-    try {
-      const zustandState = JSON.parse(localStorage.getItem("movil-express-storage") || "null");
-      if (zustandState && Array.isArray(zustandState.state?.carrito)) {
-        detalles = zustandState.state.carrito.map((item: any) => ({
-          ...item.producto,
-          cantidad: item.cantidad,
-          color: item.color
-        }));
-      }
-    } catch (e) {}
-    // Extraer datos de envío si existen
-    let datosEnvio = null;
-    try {
-      datosEnvio = JSON.parse(localStorage.getItem("checkout_datos_envio") || "null");
-    } catch (e) {}
+    const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
     if (!pedido || !detalles || !Array.isArray(detalles) || detalles.length === 0) {
       setStatus("error");
       setMsg("No hay datos de la compra.");
       return;
     }
-    // Unificar todos los datos en un solo objeto pedidoFinal
-    const pedidoFinal = { ...pedido, ...(datosEnvio || {}) };
-    // 1. Guardar en la base de datos
-    // Asegurar que email, ciudad y total estén presentes
-    const email = pedidoFinal.email || pedidoFinal.correo || (datosEnvio && datosEnvio.email) || "";
-    const ciudad = pedidoFinal.ciudad || pedidoFinal.localidad || (datosEnvio && datosEnvio.ciudad) || "";
-    let total = pedidoFinal.total;
-    if (!total && Array.isArray(detalles)) {
-      total = detalles.reduce((acc, item) => acc + ((item.precio_actual || 0) * (item.cantidad || 1)), 0);
-    }
     fetch("/api/ordenes/datos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        pedidoId: pedidoFinal.pedidoId || pedidoFinal.id || `ORD-${Date.now()}`,
-        nombre: pedidoFinal.nombre,
-        direccion: pedidoFinal.direccion,
-        telefono: pedidoFinal.telefono,
-        email,
-        ciudad,
-        notas: pedidoFinal.notas,
-        total,
-        detalles
-      })
+      body: JSON.stringify({ pedido, detalles })
     })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          // 2. Notificar por correo/whatsapp
-          fetch("/api/order_purchase", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pedido: pedidoFinal, detalles })
-          })
-            .then(res2 => res2.json())
-            .then(data2 => {
-              if (data2.success) {
-                setStatus("ok");
-                localStorage.removeItem("order_purchase_pedido");
-                localStorage.removeItem("order_purchase_detalles");
-                setTimeout(() => {
-                  window.location.href = "/checkout/datos";
-                }, 1200);
-              } else {
-                setStatus("error");
-                setMsg(data2.error || "Error al notificar la compra.");
-              }
-            })
-            .catch(() => {
-              setStatus("error");
-              setMsg("Error al notificar la compra.");
-            });
-          
+          setStatus("ok");
+          localStorage.removeItem("order_purchase_pedido");
+          localStorage.removeItem("order_purchase_detalles");
+          setTimeout(() => {
+            window.location.href = "/checkout/datos";
+          }, 1200);
         } else {
           setStatus("error");
           setMsg(data.error || "Error al guardar la orden.");
