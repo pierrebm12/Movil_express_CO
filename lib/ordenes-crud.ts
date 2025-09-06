@@ -1,6 +1,6 @@
 import { executeQuery, executeQuerySingle } from "@/lib/database";
 
-// Obtener todas las órdenes
+// Obtener todas las órdenes pendientes
 export async function getOrders() {
   const query = `SELECT * FROM orden_datos ORDER BY id DESC`;
   return await executeQuery(query);
@@ -18,7 +18,7 @@ export async function deleteOrder(orderId: number) {
   await executeQuery(`DELETE FROM orden_datos WHERE id = ?`, [orderId]);
 }
 
-// Confirmar una orden: copiar productos a productos_confirmados y marcar como confirmada
+// Confirmar una orden: copiar productos a productos_confirmados y eliminar la orden y sus detalles
 export async function confirmarOrden(orderId: number) {
   // Obtener datos de la orden
   const orden = await executeQuerySingle(`SELECT * FROM orden_datos WHERE id = ?`, [orderId]);
@@ -44,9 +44,11 @@ export async function confirmarOrden(orderId: number) {
         orden.direccion || null,
         orden.ciudad || null,
         orden.departamento || null,
-        orden.codigoPostal || null
+        orden.codigo_postal || null
       ]
     );
   }
-  await executeQuery(`UPDATE orden_datos SET estado = 'confirmada' WHERE id = ?`, [orderId]);
+  // Eliminar la orden y sus detalles
+  await executeQuery(`DELETE FROM orden_detalles WHERE orden_id = ?`, [orderId]);
+  await executeQuery(`DELETE FROM orden_datos WHERE id = ?`, [orderId]);
 }

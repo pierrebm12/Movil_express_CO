@@ -32,7 +32,7 @@ const ProductCarousel: React.FC = () => {
             price: 1730000,
             storage: "64GB",
             condition: "91%",
-            image: "/assets/productos/celulares/usado/iphone/12_64gb_94.jpg"
+            image: "/assets/productos/celulares/usado/iphone/iphone1264gb.jpg"
         },
         {
             id: 4,
