@@ -209,7 +209,7 @@ export default function OrderSection() {
                       <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{order.departamento || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{order.codigoPostal || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{order.notas || <span className="text-gray-400">-</span>}</td>
-                      <td className="py-2 px-2 text-[#988443] font-bold whitespace-nowrap">{order.total.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</td>
+                      <td className="py-2 px-2 text-[#988443] font-bold whitespace-nowrap">{"$" + order.total.toLocaleString("es-CO", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
                       <td className="py-2 px-2 flex justify-center items-center whitespace-nowrap">
                         <button
                           className="luxury-btn bg-[#988443] text-white hover:bg-[#b3a05a] transition-all px-3 py-1 rounded-full shadow-md font-bold text-xl"
