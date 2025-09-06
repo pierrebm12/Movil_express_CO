@@ -210,7 +210,7 @@ export default function OrderSection() {
                       <td className="py-2 px-2 flex justify-center items-center whitespace-nowrap">
                         <button
                           className="luxury-btn bg-[#988443] text-white hover:bg-[#b3a05a] transition-all px-3 py-1 rounded-full shadow-md font-bold text-xl"
-                          onClick={() => setOrderToEdit(order)}
+                          onClick={() => { setOrderToEdit(order); setShowEditModal(true); }}
                           title="Más acciones"
                         >
                           ...
