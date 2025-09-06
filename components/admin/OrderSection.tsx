@@ -168,7 +168,10 @@ export default function OrderSection() {
             </button>
           </div>
           {orderLoading && <div className="text-lg text-[#988443] font-semibold animate-pulse">Cargando...</div>}
-          <div className="w-full bg-white/90 rounded-2xl shadow-2xl p-2 mb-10 border border-[#988443] backdrop-blur-md overflow-x-auto">
+          <div
+            className="w-full bg-white/90 rounded-2xl shadow-2xl p-2 mb-10 border border-[#988443] backdrop-blur-md"
+            style={{ minHeight: '110vh', maxHeight: '110vh', overflowX: 'auto', overflowY: 'auto' }}
+          >
             <table className="min-w-[900px] w-full text-center luxury-table">
               <thead>
                 <tr className="bg-[#988443] text-white">

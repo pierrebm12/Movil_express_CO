@@ -5,12 +5,13 @@ export async function getOrders() {
   const query = `SELECT * FROM orden_datos ORDER BY id DESC`;
   const rows = await executeQuery(query);
   // Map codigo_postal to codigoPostal
-  return rows.map((row: any) => ({
-    ...row,
-    codigoPostal: row.codigo_postal,
-    // Optionally remove codigo_postal if you want only camelCase in frontend
-    // ...(delete row.codigo_postal && {})
-  }));
+  return rows.map((row: any) => {
+    const { codigo_postal, ...rest } = row;
+    return {
+      ...rest,
+      codigoPostal: codigo_postal
+    };
+  });
 }
 
 // Obtener detalles de una orden
