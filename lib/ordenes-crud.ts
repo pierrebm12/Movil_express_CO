@@ -3,7 +3,14 @@ import { executeQuery, executeQuerySingle } from "@/lib/database";
 // Obtener todas las órdenes pendientes
 export async function getOrders() {
   const query = `SELECT * FROM orden_datos ORDER BY id DESC`;
-  return await executeQuery(query);
+  const rows = await executeQuery(query);
+  // Map codigo_postal to codigoPostal
+  return rows.map((row: any) => ({
+    ...row,
+    codigoPostal: row.codigo_postal,
+    // Optionally remove codigo_postal if you want only camelCase in frontend
+    // ...(delete row.codigo_postal && {})
+  }));
 }
 
 // Obtener detalles de una orden
@@ -44,7 +51,7 @@ export async function confirmarOrden(orderId: number) {
         orden.direccion || null,
         orden.ciudad || null,
         orden.departamento || null,
-        orden.codigo_postal || null
+  orden.codigo_postal || null
       ]
     );
   }
