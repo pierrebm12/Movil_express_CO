@@ -20,11 +20,32 @@ export async function deleteOrder(orderId: number) {
 
 // Confirmar una orden: copiar productos a productos_confirmados y marcar como confirmada
 export async function confirmarOrden(orderId: number) {
+  // Obtener datos de la orden
+  const orden = await executeQuerySingle(`SELECT * FROM orden_datos WHERE id = ?`, [orderId]);
+  if (!orden) throw new Error("Orden no encontrada");
   const detalles = await executeQuery(`SELECT * FROM orden_detalles WHERE orden_id = ?`, [orderId]);
   for (const d of detalles) {
     await executeQuery(
-      `INSERT INTO productos_confirmados (orden_id, producto_nombre, cantidad, precio_unitario, fecha_confirmacion) VALUES (?, ?, ?, ?, NOW())`,
-      [orderId, d.producto_nombre, d.cantidad, d.precio_unitario]
+      `INSERT INTO productos_confirmados (
+        orden_id, producto_id, producto_nombre, cantidad, precio_unitario, subtotal, fecha_confirmacion, numero_pedido,
+        nombre, email, telefono, direccion, ciudad, departamento, codigo_postal
+      ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        orderId,
+        d.producto_id || null,
+        d.producto_nombre,
+        d.cantidad,
+        d.precio_unitario,
+        d.cantidad * d.precio_unitario,
+        orden.numero_pedido || null,
+        orden.nombre || null,
+        orden.email || null,
+        orden.telefono || null,
+        orden.direccion || null,
+        orden.ciudad || null,
+        orden.departamento || null,
+        orden.codigoPostal || null
+      ]
     );
   }
   await executeQuery(`UPDATE orden_datos SET estado = 'confirmada' WHERE id = ?`, [orderId]);
