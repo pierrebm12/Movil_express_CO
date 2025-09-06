@@ -60,6 +60,24 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
   useEffect(() => {
     if (!buttonRef.current || !integritySignature || !orderId) return;
     buttonRef.current.innerHTML = "";
+    // Extraer datos del cliente y productos
+    const pedido = JSON.parse(localStorage.getItem("order_purchase_pedido") || "null");
+    const detalles = JSON.parse(localStorage.getItem("order_purchase_detalles") || "null");
+    // Construir customer y items para Bold
+    const customer = pedido ? {
+      name: pedido.nombre,
+      email: pedido.email,
+      phone: pedido.telefono,
+      address: pedido.direccion,
+      city: pedido.ciudad,
+      state: pedido.departamento,
+      zip: pedido.codigoPostal
+    } : undefined;
+    const items = Array.isArray(detalles) ? detalles.map((d: any) => ({
+      name: d.producto_nombre,
+      quantity: d.cantidad,
+      price: d.precio_unitario
+    })) : [];
     const script = document.createElement("script");
     script.setAttribute("data-bold-button", "dark-L");
     script.setAttribute("data-api-key", boldToken);
@@ -69,6 +87,12 @@ export default function BoldButton({ boldToken, total }: BoldButtonProps) {
     script.setAttribute("data-description", "Compra en Movil Express");
     script.setAttribute("data-redirection-url", "https://movilexpressco.up.railway.app/checkout/datos");
     script.setAttribute("data-integrity-signature", integritySignature);
+  if (customer) script.setAttribute("data-customer", JSON.stringify(customer));
+  if (items.length > 0) script.setAttribute("data-items", JSON.stringify(items));
+  // Mensaje personalizado de agradecimiento
+  script.setAttribute("data-message", "Gracias por comprar en Movil Express, en poco nuestros asesores te contactarán.");
+  // Logo de Movil Express
+  script.setAttribute("data-logo", "https://movilexpressco.up.railway.app/assets/logos/LogoBlanco.jpeg");
     // Guardar datos antes de redirigir (cuando el usuario hace click en el botón de Bold)
     script.addEventListener("click", saveOrderData);
     script.src = "https://checkout.bold.co/library/boldPaymentButton.js";
