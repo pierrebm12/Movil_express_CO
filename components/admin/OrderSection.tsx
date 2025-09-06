@@ -345,18 +345,27 @@ export default function OrderSection() {
             </button>
           </div>
           {confirmedLoading && <div className="text-lg text-[#988443] font-semibold animate-pulse">Cargando...</div>}
-          <div className="w-full bg-white/90 rounded-2xl shadow-2xl p-2 mb-10 border border-[#988443] backdrop-blur-md overflow-x-auto">
+          <div
+            className="w-full bg-white/90 rounded-2xl shadow-2xl p-2 mb-10 border border-[#988443] backdrop-blur-md"
+            style={{ minHeight: '110vh', maxHeight: '110vh', overflowX: 'auto', overflowY: 'auto' }}
+          >
             <table className="min-w-[900px] w-full text-center luxury-table">
               <thead>
                 <tr className="bg-[#988443] text-white">
                   <th className="py-3 px-2 whitespace-nowrap">ID</th>
                   <th className="py-3 px-2 whitespace-nowrap">Factura</th>
-                  <th className="py-3 px-2 whitespace-nowrap">Producto</th>
+                  <th className="py-3 px-2 whitespace-nowrap">Cliente</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden sm:table-cell">Email</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden md:table-cell">Teléfono</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden md:table-cell">Dirección</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden lg:table-cell">Ciudad</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden lg:table-cell">Departamento</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden xl:table-cell">Código Postal</th>
+                  <th className="py-3 px-2 whitespace-nowrap hidden xl:table-cell">Producto</th>
                   <th className="py-3 px-2 whitespace-nowrap">Cantidad</th>
                   <th className="py-3 px-2 whitespace-nowrap">Precio Unitario</th>
                   <th className="py-3 px-2 whitespace-nowrap">Subtotal</th>
                   <th className="py-3 px-2 whitespace-nowrap">Fecha Confirmación</th>
-                  <th className="py-3 px-2 whitespace-nowrap">Cliente</th>
                   <th className="py-3 px-2 whitespace-nowrap">Acciones</th>
                 </tr>
               </thead>
@@ -367,14 +376,20 @@ export default function OrderSection() {
                   )
                   .map((p) => (
                     <tr key={p.id} className="transition-all duration-200 hover:bg-[#f5e9c6]">
-                      <td className="py-2 px-2 whitespace-nowrap">{p.id}</td>
+                      <td className="py-2 px-2 font-semibold whitespace-nowrap">{p.id}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.numero_pedido || <span className="text-gray-400">-</span>}</td>
-                      <td className="py-2 px-2 whitespace-nowrap">{p.producto_nombre}</td>
+                      <td className="py-2 px-2 whitespace-nowrap">{p.nombre || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden sm:table-cell">{p.email || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden md:table-cell">{p.telefono || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden md:table-cell">{p.direccion || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{p.ciudad || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden lg:table-cell">{p.departamento || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{p.codigoPostal || <span className="text-gray-400">-</span>}</td>
+                      <td className="py-2 px-2 whitespace-nowrap hidden xl:table-cell">{p.producto_nombre}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.cantidad}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.precio_unitario.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.subtotal?.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{p.fecha_confirmacion ? new Date(p.fecha_confirmacion).toLocaleString() : <span className="text-gray-400">-</span>}</td>
-                      <td className="py-2 px-2 whitespace-nowrap">{p.nombre || <span className="text-gray-400">-</span>}</td>
                       <td className="py-2 px-2 whitespace-nowrap flex gap-2 justify-center">
                         <button
                           className="luxury-btn bg-[#988443] text-white hover:bg-[#b3a05a] transition-all px-3 py-1 rounded-lg shadow-md font-semibold"
@@ -404,13 +419,55 @@ export default function OrderSection() {
               </tbody>
             </table>
           </div>
-          {selectedConfirmed && (
-            <div className="mb-8 w-full max-w-4xl mx-auto bg-white/95 rounded-2xl shadow-xl p-2 border border-[#988443] overflow-x-auto animate-modalpop">
-              <h3 className="text-2xl font-bold mb-4 text-[#988443] text-center">Detalles del Producto Confirmado #{selectedConfirmed}</h3>
-              {/* Aquí puedes mostrar más detalles si lo deseas */}
-              <button className="mt-4 px-6 py-2 rounded-lg bg-gray-300 text-gray-800 font-bold hover:bg-gray-400" onClick={() => setSelectedConfirmed(null)}>Cerrar</button>
-            </div>
-          )}
+          {selectedConfirmed && (() => {
+            const p = confirmed.find(c => c.id === selectedConfirmed);
+            if (!p) return null;
+            return (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fadein" onClick={e => { if (e.target === e.currentTarget) setSelectedConfirmed(null); }}>
+                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full border-2 border-[#988443] flex flex-col items-center relative animate-modalpop">
+                  <button
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
+                    onClick={() => setSelectedConfirmed(null)}
+                    aria-label="Cerrar"
+                  >×</button>
+                  <h3 className="text-2xl font-bold mb-4 text-[#988443] text-center">Detalles del Producto Confirmado #{p.id}</h3>
+                  <div className="w-full flex flex-col gap-2 text-base">
+                    <div><span className="font-semibold text-[#988443]">Factura:</span> {p.numero_pedido || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Cliente:</span> {p.nombre || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Email:</span> {p.email || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Teléfono:</span> {p.telefono || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Dirección:</span> {p.direccion || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Ciudad:</span> {p.ciudad || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Departamento:</span> {p.departamento || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Código Postal:</span> {p.codigoPostal || <span className="text-gray-400">-</span>}</div>
+                    <div><span className="font-semibold text-[#988443]">Producto:</span> {p.producto_nombre}</div>
+                    <div><span className="font-semibold text-[#988443]">Cantidad:</span> {p.cantidad}</div>
+                    <div><span className="font-semibold text-[#988443]">Precio Unitario:</span> {p.precio_unitario.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</div>
+                    <div><span className="font-semibold text-[#988443]">Subtotal:</span> {p.subtotal?.toLocaleString("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 })}</div>
+                    <div><span className="font-semibold text-[#988443]">Fecha Confirmación:</span> {p.fecha_confirmacion ? new Date(p.fecha_confirmacion).toLocaleString() : <span className="text-gray-400">-</span>}</div>
+                  </div>
+                  <button className="mt-6 px-6 py-2 rounded-lg bg-gray-300 text-gray-800 font-bold hover:bg-gray-400" onClick={() => setSelectedConfirmed(null)}>Cerrar</button>
+                </div>
+                <style jsx global>{`
+                  @keyframes fadein {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                  }
+                  .animate-fadein {
+                    animation: fadein 0.2s ease;
+                  }
+                  @keyframes modalpop {
+                    0% { transform: scale(0.7); opacity: 0; }
+                    80% { transform: scale(1.05); opacity: 1; }
+                    100% { transform: scale(1); opacity: 1; }
+                  }
+                  .animate-modalpop {
+                    animation: modalpop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+                  }
+                `}</style>
+              </div>
+            );
+          })()}
         </div>
       )}
     </section>
