@@ -67,7 +67,38 @@ const ShareButtonModal: React.FC<ShareButtonModalProps> = ({ product }) => {
 interface ProductPageProps {
   productId?: string | number;
 }
-import { ChevronLeft, ChevronRight, ShoppingCart, Check, Heart, Share2, Star, Copy, X, MessageCircle, Facebook, Instagram, Youtube } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Check, Heart, Share2, Star, Copy, X, MessageCircle, Facebook, Instagram, Youtube, ArrowDown } from 'lucide-react';
+// Botón de volver
+const BackButton = () => (
+  <button
+    onClick={() => window.history.back()}
+    className="absolute top-4 left-4 z-30 flex items-center gap-2 bg-white/80 hover:bg-primary-100 text-primary-700 hover:text-primary-900 font-semibold px-4 py-2 rounded-full shadow transition-all duration-200 border border-primary-200"
+    aria-label="Volver"
+  >
+    <ChevronLeft className="w-5 h-5" /> Volver
+  </button>
+);
+
+// Flecha scroll down (aparece una sola vez)
+const ScrollDownArrow = () => {
+  const [show, setShow] = React.useState(true);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) setShow(false);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  if (!show) return null;
+  return (
+    <div className="absolute left-1/2 -translate-x-1/2 bottom-2 md:bottom-4 z-20 flex flex-col items-center animate-fadeIn">
+      <span className="text-primary-700 text-sm mb-1 bg-white/80 px-2 py-0.5 rounded-full shadow">Desliza hacia abajo</span>
+      <ArrowDown className="w-8 h-8 text-primary-700 animate-bounce" />
+    </div>
+  );
+};
 import { Footer, redesSociales as footerRedesSociales } from "./footer";
 import { useStore } from "@/lib/store"
 import { fetchProductoById, fetchRelatedProducts } from "@/lib/api"
@@ -140,11 +171,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [images.length, isAutoPlaying]);
 
@@ -165,41 +194,39 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   };
 
   return (
-    <div className="relative group">
-      <div className="relative h-96 md:h-[500px] overflow-hidden rounded-2xl shadow-2xl">
+    <div className="relative group w-full flex flex-col items-center">
+      <div className="relative w-full h-[55vw] max-h-[420px] md:h-[500px] overflow-hidden rounded-2xl shadow-2xl flex items-center justify-center bg-white">
         <img
           src={images[currentIndex]}
           alt="Product"
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-500 hover:scale-105 mx-auto"
+          style={{ maxHeight: '100%', maxWidth: '100%' }}
         />
-        
         {/* Navigation buttons */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-80 group-hover:opacity-100 transition-all duration-300"
         >
           <ChevronLeft size={24} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-80 group-hover:opacity-100 transition-all duration-300"
         >
           <ChevronRight size={24} />
         </button>
-
         {/* Auto-play indicator */}
-        <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-black/70 text-white px-3 py-1 rounded-full text-xs md:text-sm">
           {currentIndex + 1} / {images.length}
         </div>
       </div>
-
       {/* Thumbnails */}
-      <div className="flex justify-center mt-4 space-x-2">
+      <div className="flex justify-center mt-3 md:mt-4 space-x-2">
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+            className={`w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
               index === currentIndex 
                 ? 'border-primary-500 scale-110' 
                 : 'border-gray-300 hover:border-primary-300'
@@ -375,7 +402,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   const [showFloatingCart, setShowFloatingCart] = useState(false);
   const [marcaLogo, setMarcaLogo] = useState<string>("");
 
-
   useEffect(() => {
     // Cargar producto y relacionados desde la base de datos
     const id = productId ? Number(productId) : 1;
@@ -427,21 +453,30 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 relative">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 relative flex flex-col">
         <FloatingBubbles />
+        <BackButton />
         {/* Header con logo Movil Express */}
         <header className="w-full flex flex-col items-center justify-center py-2 mb-6 bg-gradient-to-r from-primary-600 via-black to-primary-600 shadow-2xl rounded-b-3xl relative">
-          <img src="/assets/logos/logosinFondo.PNG" alt="Movil Express Logo" className="h-32 md:h-40 drop-shadow-2xl mb-4 animate-fadeIn" style={{objectFit: 'contain'}} />
+          <img 
+            src="/assets/logos/logosinFondo.PNG" 
+            alt="Movil Express Logo" 
+            className="h-36 sm:h-44 md:h-56 lg:h-64 xl:h-80 drop-shadow-2xl -mb-10 animate-fadeIn transition-all duration-300"
+            style={{objectFit: 'contain'}} 
+          />
         </header>
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
-        {/* ATTENTION - Hero Section */}
-        <div className="grid md:grid-cols-2 gap-12 mb-16">
-          <div>
-              <div className="relative">
-                <ImageCarousel images={product.imagenes?.length ? product.imagenes.map((img: ProductoImagen) => img.url_imagen || "/placeholder.svg") : ["/placeholder.svg"]} />
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-2 sm:px-4 py-4 flex-1 flex flex-col justify-center">
+          {/* ATTENTION - Hero Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16 items-center justify-center">
+            {/* Imagen principal */}
+            <div className="flex justify-center items-center w-full relative">
+              <div className="relative w-full flex justify-center items-center">
+                <div className="w-full max-w-[420px] sm:max-w-[500px] md:max-w-[520px] lg:max-w-[600px] mx-auto">
+                  <ImageCarousel images={product.imagenes?.length ? product.imagenes.map((img: ProductoImagen) => img.url_imagen || "/placeholder.svg") : ["/placeholder.svg"]} />
+                </div>
                 {/* Logo de la marca en la esquina inferior derecha de la imagen principal */}
                 {marcaLogo && (
-                  <div className="absolute bottom-20 right-4 z-20">
+                  <div className="absolute bottom-12 right-2 md:bottom-20 md:right-4 z-20">
                     <img
                       src={marcaLogo}
                       alt={`Logo ${product.marca}`}
@@ -450,10 +485,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                     />
                   </div>
                 )}
+                <ScrollDownArrow />
               </div>
-          </div>
-          
-          <div className="space-y-6">
+            </div>
+            {/* Contenido principal */}
+            <div className="space-y-6 flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-xl mx-auto">
             {/* INTEREST - Product Info */}
             <div>
               <div className="flex items-center space-x-2 mb-4">

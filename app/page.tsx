@@ -11,6 +11,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { PromotionSlider } from "@/components/promotion-slider"
 import { ProductSlider } from "@/components/product-slider"
+import { EcoSlider } from "@/components/EcoSlider"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react";
 import { Settings, BarChart3, Package, Users, Target, Eye } from "lucide-react";
@@ -199,16 +200,21 @@ export default function HomePage() {
             ) : errorEco ? (
               <div className="text-center text-red-600 py-8">Error: {errorEco}</div>
             ) : productosEco && productosEco.length > 0 ? (
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-green-50">
-                <div style={{ minWidth: '600px' }}>
-                  <ProductSlider
-                    productos={productosEco}
-                    titulo="Movilidad Eco"
-                    autoPlay={true}
-                    autoPlayInterval={5000}
-                  />
-                </div>
-              </div>
+              <EcoSlider
+                productos={productosEco.map((p: any) => ({
+                  id: p.id,
+                  nombre: p.nombre,
+                  descripcion: p.descripcion,
+                  precio: p.precio_actual,
+                  imagen: p.imagen_principal || (p.imagenes?.[0]?.url_imagen) || "/assets/placeholder.png",
+                  destacado: p.destacado,
+                  tags: p.categorias?.map((cat: any) => cat.nombre) || [],
+                  color: p.color || undefined,
+                  stock: p.stock,
+                }))}
+                autoPlay={true}
+                autoPlayInterval={5000}
+              />
             ) : (
               <div className="text-center py-8 text-green-700">No hay productos eco disponibles.</div>
             )}

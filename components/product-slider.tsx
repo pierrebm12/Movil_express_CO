@@ -166,9 +166,6 @@ export function ProductSlider({ productos, titulo, autoPlay = true, autoPlayInte
   return (
     <div className="w-full">
       {/* HEADER SIN FLECHAS - Solo título */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl md:text-3xl font-bold text-black">{titulo}</h3>
-      </div>
 
       <div className="relative overflow-hidden">
         {/* SIN CONTROLES MÓVILES */}
@@ -222,7 +219,7 @@ export function ProductSlider({ productos, titulo, autoPlay = true, autoPlayInte
             return (
               <div
                 key={producto.id}
-                className="flex-shrink-0 px-2 pointer-events-auto"
+                className="flex-shrink-0 flex  px-2 pointer-events-auto"
                 style={{ width: `${100 / itemsPerView}%`, minHeight: '520px', maxHeight: '520px', height: '520px' }}
               >
                 <ProductSliderCard producto={cardData} />

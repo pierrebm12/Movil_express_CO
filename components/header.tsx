@@ -8,7 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 export function Header() {
-  const { menuAbierto, toggleMenu, carrito, filtros = {}, actualizarFiltros, isAuthenticated, usuario} = useStore()
+  const { menuAbierto, toggleMenu, carrito, filtros = { busqueda: "" }, actualizarFiltros, isAuthenticated, usuario} = useStore()
 
   const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0)
 
@@ -126,24 +126,28 @@ export function Header() {
               <Link
                 href="/"
                 className="text-black hover:text-primary-600 font-medium transition-colors duration-200 py-2 px-4 rounded-lg hover:bg-gray-50"
+                onClick={toggleMenu}
               >
                 Inicio
               </Link>
               <Link
                 href="/catalogo"
                 className="text-black hover:text-primary-600 font-medium transition-colors duration-200 py-2 px-4 rounded-lg hover:bg-gray-50"
+                onClick={toggleMenu}
               >
                 Catálogo
               </Link>
               <Link
                 href="/servicio-tecnico"
                 className="text-black hover:text-primary-600 font-medium transition-colors duration-200 py-2 px-4 rounded-lg hover:bg-gray-50"
+                onClick={toggleMenu}
               >
                 Servicio Técnico
               </Link>
               <Link
                 href="/nosotros"
                 className="text-black hover:text-primary-600 font-medium transition-colors duration-200 py-2 px-4 rounded-lg hover:bg-gray-50"
+                onClick={toggleMenu}
               >
                 Nosotros
               </Link>

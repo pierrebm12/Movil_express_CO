@@ -19,53 +19,53 @@ export default function NosotrosPage() {
       
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-black via-gray-900 to-black text-white">
-  {/* Imagen de fondo con opacidad */}
-  <img 
-    src="/assets/banners/sucursalYopal.webp" 
-    alt="sede yopal" 
-    className="absolute inset-0 w-full h-full object-cover object-center opacity-30 z-0" 
-  />
-  
-  {/* Contenido principal */}
-  <div className="container mx-auto px-4 relative z-10">
-    <div className="text-center max-w-4xl mx-auto">
-      <h1 className="text-4xl md:text-6xl font-bold mb-6">
-        Conoce <span className="text-primary-600">Movil Express</span>
-      </h1>
-      <p className="text-xl md:text-2xl text-gray-200 leading-relaxed">
-        Más que una tienda de tecnología, somos tu aliado en la era digital. Conectamos personas con la innovación
-        que transforma vidas.
-      </p>
-    </div>
-  </div>
-</section>
+      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden">
+        {/* Imagen de fondo con opacidad */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src="/assets/banners/sucursalYopal.webp" 
+            alt="sede yopal" 
+            className="w-full h-full object-cover object-center opacity-30" 
+            style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+          />
+        </div>
+        {/* Contenido principal */}
+        <div className="relative z-10 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 mx-auto max-w-4xl text-center">
+          <h1 className="text-3xl xs:text-4xl md:text-6xl font-bold mb-6 break-words">
+            Conoce <span className="text-primary-600">Movil Express</span>
+          </h1>
+          <p className="text-lg xs:text-xl md:text-2xl text-gray-200 leading-relaxed max-w-2xl mx-auto">
+            Más que una tienda de tecnología, somos tu aliado en la era digital. Conectamos personas con la innovación
+            que transforma vidas.
+          </p>
+        </div>
+      </section>
 
       {/* Nuestra Historia */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-black mb-6">Nuestra Historia</h2>
-              <div className="space-y-4 text-lg text-gray-700 leading-relaxed">
+          <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+            <div className="w-full flex items-center justify-center mb-8 lg:mb-0">
+              <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-full flex items-center justify-center">
+                <ImageSlider images={["/assets/banners/iniciosmovil.jpeg", "/assets/banners/iniciosmovil2.jpeg"]} />
+              </div>
+            </div>
+            <div className="w-full">
+              <h2 className="text-3xl xs:text-4xl font-bold text-black mb-6 text-center lg:text-left">Nuestra Historia</h2>
+              <div className="space-y-4 text-base xs:text-lg text-gray-700 leading-relaxed text-center lg:text-left">
                 <p>
                   Fundada en 2017, <strong>Movil Express</strong> nació con una visión clara: democratizar el acceso a
                   la tecnología móvil de vanguardia en Colombia.
                 </p>
                 <p>
-                  Nace en el año 2017 en la ciudad de Yopal, en un local pequeño con las ganas de cmabiar la vida de las personas atraves d eun buen telefono.
-                  Con pasion y esfuerzo, Hwander fue creando un acomunidad, ganandose la confianza de los clientes y creciendo paso a paso, hoy esta presente en Yopal, Bogotá y Medellin, con un equipo humano que comparte un mismo proposito: Servir con Honestidad y ofrecer tecnologia de calidad a un precio justo.
-
+                  Nace en el año 2017 en la ciudad de Yopal, en un local pequeño con las ganas de cambiar la vida de las personas a través de un buen teléfono.
+                  Con pasión y esfuerzo, Hwander fue creando una comunidad, ganándose la confianza de los clientes y creciendo paso a paso. Hoy está presente en Yopal, Bogotá y Medellín, con un equipo humano que comparte un mismo propósito: Servir con honestidad y ofrecer tecnología de calidad a un precio justo.
                 </p>
                 <p>
                   Nuestro compromiso va más allá de la venta: ofrecemos una experiencia completa que incluye asesoría
                   especializada, servicio técnico certificado y soporte postventa excepcional.
                 </p>
               </div>
-            </div>
-            {/* Slider de imágenes infinito */}
-            <div className="relative w-full flex items-center justify-center">
-              <ImageSlider images={["/assets/banners/iniciosmovil.jpeg", "/assets/banners/iniciosmovil2.jpeg"]} />
             </div>
           </div>
         </div>
