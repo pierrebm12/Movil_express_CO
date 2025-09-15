@@ -103,7 +103,7 @@ export default function HomePage() {
       {/* Hero Section - Optimizado para móvil */}
       <section className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <Image src="/assets/banners/fondo.jpg" alt="Fondo Movil Express" fill className="object-cover" priority />
+          <Image src="/assets/banners/background.jpeg" alt="Fondo Movil Express" fill className="object-cover" priority />
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
 
